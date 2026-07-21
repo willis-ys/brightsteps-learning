@@ -1,1 +1,0 @@
-v7: fixed iPad Safari preload URL mismatch; rebuilt B, D, G, J, M, Q, W, Y and Z as 44.1 kHz PCM WAV with lead-in, stronger level, slower sustained sounds and two embedded repetitions. Synthetic voice source remains machine-generated.

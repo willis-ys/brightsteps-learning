@@ -69,7 +69,7 @@ button{font:inherit} .app{max-width:1100px;margin:auto;padding:18px 18px 100px} 
 </section>
 
 <section id="maths" class="screen">
-<div class="lesson-head"><button class="back" data-go="home">← Home</button><h2>Maths Mountain</h2><div class="pill"><span id="mathCount">1</span>/10</div></div>
+<div class="lesson-head"><button class="back" data-go="home">← Home</button><h2>Maths Mountain</h2><div class="pill"><span id="mathCount">1</span>/<span id="mathTotal">30</span></div></div>
 <div class="lesson-card"><div class="stage" id="mathStage">Number challenge</div><div class="instruction" id="mathQuestion"></div><div class="choices" id="mathChoices"></div><div class="feedback" id="mathFeedback"></div><button class="primary hidden" id="mathNext">Next</button></div>
 </section>
 
@@ -116,33 +116,25 @@ function getAudio(file){
   }
   return audioCache.get(file);
 }
-let phonicsReplayTimer=null;
-function audio(file){
-  clearTimeout(phonicsReplayTimer);
-  const a=getAudio(file);
-  try{a.pause();a.currentTime=0;}catch(e){}
-  const playNow=()=>a.play().catch(()=>{});
-  if(a.readyState>=2) playNow();
-  else a.addEventListener('canplaythrough',playNow,{once:true});
+let activeAudio=null;
+function stopAudio(){
+  if(activeAudio){try{activeAudio.pause();activeAudio.currentTime=0;}catch(e){} activeAudio=null;}
 }
-function phonicsAudio(file){
-  clearTimeout(phonicsReplayTimer);
-  const a=getAudio(file);
-  try{a.pause();a.currentTime=0;}catch(e){}
-  const firstPlay=()=>{
-    a.play().catch(()=>{});
-    a.addEventListener('ended',()=>{
-      phonicsReplayTimer=setTimeout(()=>{
-        try{a.currentTime=0;}catch(e){}
-        a.play().catch(()=>{});
-      },180);
-    },{once:true});
-  };
-  if(a.readyState>=2) firstPlay();
-  else a.addEventListener('canplaythrough',firstPlay,{once:true});
+function playClip(file){
+  stopAudio();
+  const src=file+(file.includes('?')?'&':'?')+'v=5';
+  const a=new Audio(src);
+  a.preload='auto';
+  activeAudio=a;
+  const start=()=>{try{a.currentTime=0;}catch(e){} a.play().catch(()=>{});};
+  if(a.readyState>=2) start(); else a.addEventListener('canplay',start,{once:true});
+  a.addEventListener('ended',()=>{if(activeAudio===a)activeAudio=null;},{once:true});
+  a.load();
 }
+function audio(file){playClip(file);}
+function phonicsAudio(file){playClip(file);}
 function preloadLessonAudio(){
-  DATA.forEach(x=>{getAudio('audio/sound_'+x.key+'.wav');getAudio('audio/word_'+x.key+'.wav');});
+  DATA.forEach(x=>{getAudio('audio/sound_'+x.key+'.wav?v=5');getAudio('audio/word_'+x.key+'.wav?v=5');});
 }
 function item(key){return DATA.find(x=>x.key===key);}
 function renderLetters(){const g=$('#letterGrid');g.innerHTML='';ORDER.forEach(k=>{const d=item(k),b=document.createElement('button');b.className='letter'+(state.learned.includes(k)?' learned':'');b.textContent=d.letter;b.onclick=()=>openLesson(k);g.appendChild(b);});}
@@ -157,9 +149,34 @@ function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function startPractice(){const pool=state.learned.length>=3?state.learned:ORDER.slice(0,6);quiz=shuffle(pool).slice(0,8);qpos=0;go('practice');showQ();}
 function showQ(){const k=quiz[qpos],correct=item(k);$('#quizCount').textContent=qpos+1;$('#feedback').textContent='';$('#quizNext').classList.add('hidden');$('#question').textContent='Which letter makes this sound?';const opts=shuffle([correct,...shuffle(DATA.filter(x=>x.key!==k)).slice(0,2)]);const c=$('#choices');c.innerHTML='';opts.forEach(o=>{const b=document.createElement('button');b.className='choice';b.textContent=o.letter;b.onclick=()=>{if(o.key===k){b.classList.add('correct');$('#feedback').textContent='Brilliant!';state.stars++;state.correct++;save();$('#quizNext').classList.remove('hidden');}else{b.classList.add('wrong');$('#feedback').textContent='Listen once more.';setTimeout(()=>b.classList.remove('wrong'),600);}};c.appendChild(b);});setTimeout(()=>phonicsAudio('audio/sound_'+k+'.wav'),250);$('#replay').onclick=()=>phonicsAudio('audio/sound_'+k+'.wav');}
 $('#quizNext').onclick=()=>{qpos++;if(qpos>=quiz.length){speak('Challenge complete');go('home');}else showQ();};
-function makeMath(){const arr=[];for(let i=0;i<10;i++){const type=i%4;let q,a;if(type===0){let x=3+Math.floor(Math.random()*8),y=1+Math.floor(Math.random()*5);q=`${x} + ${y} = ?`;a=x+y;}else if(type===1){let x=7+Math.floor(Math.random()*9),y=1+Math.floor(Math.random()*6);if(y>x)y=2;q=`${x} − ${y} = ?`;a=x-y;}else if(type===2){let x=2+Math.floor(Math.random()*8);q=`What comes after ${x}?`;a=x+1;}else{let x=2+Math.floor(Math.random()*5);q=`What is double ${x}?`;a=x*2;}arr.push({q,a});}return arr;}
-function startMath(){mathQuiz=makeMath();mpos=0;go('maths');showMath();}
-function showMath(){const m=mathQuiz[mpos];$('#mathCount').textContent=mpos+1;$('#mathQuestion').textContent=m.q;$('#mathFeedback').textContent='';$('#mathNext').classList.add('hidden');let opts=shuffle([m.a,m.a+1,Math.max(0,m.a-1)]);const c=$('#mathChoices');c.innerHTML='';opts.forEach(v=>{const b=document.createElement('button');b.className='choice';b.textContent=v;b.onclick=()=>{if(v===m.a){b.classList.add('correct');$('#mathFeedback').textContent='Excellent!';state.stars++;state.correct++;save();$('#mathNext').classList.remove('hidden');}else{b.classList.add('wrong');$('#mathFeedback').textContent='Try another answer.';setTimeout(()=>b.classList.remove('wrong'),600);}};c.appendChild(b);});}
+function makeMath(){
+  const arr=[], total=30;
+  const types=shuffle([0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3,4,5,6,7,0,1,2,3,4,5]);
+  for(let i=0;i<total;i++){
+    const type=types[i];let q,a;
+    if(type===0){
+      const x=2+Math.floor(Math.random()*9),y=1+Math.floor(Math.random()*7);q=`${x} + ${y} = ?`;a=x+y;
+    }else if(type===1){
+      const x=7+Math.floor(Math.random()*12),y=1+Math.floor(Math.random()*Math.min(8,x));q=`${x} − ${y} = ?`;a=x-y;
+    }else if(type===2){
+      const x=1+Math.floor(Math.random()*18);q=`What comes after ${x}?`;a=x+1;
+    }else if(type===3){
+      const x=2+Math.floor(Math.random()*18);q=`What comes before ${x}?`;a=x-1;
+    }else if(type===4){
+      const x=1+Math.floor(Math.random()*6);q=`What is double ${x}?`;a=x*2;
+    }else if(type===5){
+      const whole=5+Math.floor(Math.random()*11),part=1+Math.floor(Math.random()*(whole-1));q=`${part} + ? = ${whole}`;a=whole-part;
+    }else if(type===6){
+      const target=5+Math.floor(Math.random()*6),part=1+Math.floor(Math.random()*(target-1));q=`What number joins ${part} to make ${target}?`;a=target-part;
+    }else{
+      const start=1+Math.floor(Math.random()*8),step=Math.random()<.5?1:2;q=`Complete the pattern: ${start}, ${start+step}, ${start+step*2}, ?`;a=start+step*3;
+    }
+    arr.push({q,a});
+  }
+  return arr;
+}
+function startMath(){mathQuiz=makeMath();mpos=0;$('#mathTotal').textContent=mathQuiz.length;go('maths');showMath();}
+function showMath(){const m=mathQuiz[mpos];$('#mathCount').textContent=mpos+1;$('#mathQuestion').textContent=m.q;$('#mathFeedback').textContent='';$('#mathNext').classList.add('hidden');let distractors=[m.a+1,Math.max(0,m.a-1),m.a+2,Math.max(0,m.a-2)].filter(v=>v!==m.a);let opts=shuffle([m.a,...shuffle([...new Set(distractors)]).slice(0,2)]);const c=$('#mathChoices');c.innerHTML='';opts.forEach(v=>{const b=document.createElement('button');b.className='choice';b.textContent=v;b.onclick=()=>{if(v===m.a){b.classList.add('correct');$('#mathFeedback').textContent='Excellent!';state.stars++;state.correct++;save();$('#mathNext').classList.remove('hidden');}else{b.classList.add('wrong');$('#mathFeedback').textContent='Try another answer.';setTimeout(()=>b.classList.remove('wrong'),600);}};c.appendChild(b);});}
 $('#mathNext').onclick=()=>{mpos++;if(mpos>=mathQuiz.length){state.mathSessions++;save();speak('Maths session complete');go('home');}else showMath();};
 $('#dailyStart').onclick=()=>{startPractice();};document.querySelector('[data-go="maths"].path-card').onclick=startMath;document.querySelector('[data-go="phonics"].path-card').onclick=()=>go('phonics');document.querySelector('[data-go="rewards"].path-card').onclick=()=>go('rewards');
 function renderBadges(){const defs=[['🌱','First Sound',1],['🦋','Six Sounds',6],['🌈','Halfway Hero',13],['🏆','A–Z Champion',26],['⭐','Ten Stars',10,'star'],['👑','Fifty Stars',50,'star'],['🧠','20 Correct',20,'correct'],['🔢','Maths Explorer',3,'math']];const g=$('#badgesGrid');g.innerHTML='';defs.forEach(d=>{let ok=d[3]==='star'?state.stars>=d[2]:d[3]==='correct'?state.correct>=d[2]:d[3]==='math'?state.mathSessions>=d[2]:state.learned.length>=d[2];const x=document.createElement('div');x.className='badge'+(ok?' unlocked':'');x.innerHTML=`<div class="bicon">${d[0]}</div><h3>${d[1]}</h3><div class="small">${ok?'Unlocked':'Keep learning'}</div>`;g.appendChild(x);});}

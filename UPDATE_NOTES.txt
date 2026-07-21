@@ -1,6 +1,0 @@
-BrightSteps v6
-
-- Maths Mountain expanded from 10 to 30 questions per session.
-- Added before/after numbers, addition, subtraction, doubles, missing numbers, number bonds and patterns.
-- Improved answer choices and updated offline cache to v6.
-- Retains the corrected Phonics Forest audio from v5.

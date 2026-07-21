@@ -9,3 +9,9 @@ Audio attribution is in LICENSE-AUDIO.txt and in the Parent/Progress screen.
 
 
 v10 fix: Replaced Wikimedia API lookups with fixed direct audio file URLs to prevent the recurring first-use connection error on Safari.
+
+
+v11 fixes:
+- Replaced fragile hard-coded Wikimedia storage paths with Special:Redirect/file URLs.
+- Corrected mouse to En-uk-a_mouse.ogg.
+- Hear sound twice no longer falls back to playing the whole word.

@@ -1,110 +1,21 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#5d55d8">
-<link rel="manifest" href="manifest.webmanifest"><title>BrightSteps Academy</title>
-<style>
-:root{--p:#6257dd;--g:#20a779;--y:#ffd166;--r:#ff6b81;--ink:#22304a;--muted:#68758d;--bg:#f5f4ff;--card:#fff}
-*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:linear-gradient(#f8f7ff,#effaf6);min-height:100vh}button{font:inherit;cursor:pointer}.app{max-width:1080px;margin:auto;padding:18px 18px 104px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px}.logo{font-size:clamp(24px,4vw,38px);font-weight:950}.logo b{color:var(--p)}.pills{display:flex;gap:8px}.pill{background:#fff;border-radius:999px;padding:10px 14px;font-weight:900;box-shadow:0 6px 18px #26345a18}.screen{display:none}.screen.active{display:block}.hero{margin-top:18px;background:linear-gradient(135deg,#6257dd,#8d82ff);color:#fff;border-radius:30px;padding:28px;display:grid;grid-template-columns:1.3fr .7fr;align-items:center;box-shadow:0 18px 42px #6257dd36}.hero h1{font-size:clamp(38px,7vw,70px);line-height:1;margin:4px 0 12px}.hero p{font-size:20px;line-height:1.5}.hero-art{text-align:center;font-size:140px}.primary,.soft{border:0;border-radius:18px;padding:15px 20px;font-weight:950;font-size:18px}.primary{background:var(--y);color:#403719;box-shadow:0 7px 0 #d8aa3e}.primary:active{transform:translateY(4px);box-shadow:0 3px 0 #d8aa3e}.soft{background:#eeecff;color:var(--p)}.section-title{margin:28px 2px 12px;display:flex;justify-content:space-between;align-items:center}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.card{background:#fff;border-radius:26px;padding:20px;box-shadow:0 12px 30px #24324a12}.path{min-height:210px}.path .icon{font-size:58px}.path h3{font-size:25px;margin:8px 0}.small{color:var(--muted)}.progress{height:12px;border-radius:999px;background:#edf0f5;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,#20a779,#69dfbb)}.lesson-head{display:flex;align-items:center;justify-content:space-between;margin:12px 0 18px}.back{border:0;background:#fff;border-radius:15px;padding:12px 16px;font-weight:900;box-shadow:0 5px 16px #24324a18}.phase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.phase{border:0;text-align:left;background:#fff;border-radius:22px;padding:18px;box-shadow:0 9px 22px #24324a14}.phase strong{display:block;font-size:20px}.sound-list{font-size:25px;color:var(--p);font-weight:950;margin-top:8px}.lesson-card{text-align:center;background:#fff;border-radius:30px;padding:26px;box-shadow:0 14px 34px #24324a18}.stage{text-transform:uppercase;letter-spacing:.09em;color:var(--p);font-size:14px;font-weight:950}.big{font-size:clamp(110px,24vw,220px);font-weight:950;line-height:1;color:var(--p)}.picture{font-size:92px}.word{font-size:40px;font-weight:950}.instruction{font-size:21px;color:var(--muted);max-width:700px;margin:12px auto}.actions{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:18px}.feedback{min-height:42px;font-size:25px;font-weight:950;margin:12px}.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}.choice{border:0;border-radius:22px;background:#fff;min-height:130px;font-size:42px;font-weight:950;box-shadow:0 9px 22px #24324a18}.choice.correct{background:#dcf7eb;outline:4px solid var(--g)}.choice.wrong{background:#ffe3e8;outline:4px solid var(--r)}.hidden{display:none!important}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{text-align:center}.metric b{font-size:36px;color:var(--p)}.nav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);width:min(720px,calc(100% - 26px));background:#fff;padding:9px;border-radius:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:7px;box-shadow:0 14px 40px #24324a2b}.nav button{border:0;background:transparent;border-radius:16px;padding:9px;color:var(--muted);font-weight:850}.nav button.active{background:#eeeaff;color:var(--p)}.license{font-size:14px;line-height:1.5;background:#f3f5fa;border-radius:16px;padding:14px}.status{font-size:14px;color:var(--muted);margin-top:10px}.offline-note{background:#fff3cf;border-radius:15px;padding:12px;margin:12px 0;font-weight:700}.mastery{display:flex;gap:8px;justify-content:center}.dot{width:12px;height:12px;border-radius:50%;background:#ddd}.dot.on{background:var(--g)}
-@media(max-width:760px){.hero{grid-template-columns:1fr}.hero-art{display:none}.cards,.phase-grid{grid-template-columns:1fr}.choices{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:1fr 1fr}}
-</style></head>
-<body><div class="app">
-<header class="top"><div class="logo">🌟 <b>BrightSteps</b> Academy</div><div class="pills"><div class="pill">⭐ <span id="stars">0</span></div><div class="pill">🔥 <span id="streak">1</span></div></div></header>
-<section id="home" class="screen active">
-<div class="hero"><div><div class="stage" style="color:#fff">Structured daily learning</div><h1>Read. Think. Grow.</h1><p>Human British-English pronunciation, systematic phonics, generated practice and a larger maths curriculum.</p><button class="primary" id="daily">Start today’s adventure</button></div><div class="hero-art">🦊📚</div></div>
-<div class="section-title"><h2>Learning paths</h2><span class="small">About 15–20 minutes</span></div><div class="cards">
-<button class="card path" data-go="phonics"><div class="icon">🌲</div><h3>Phonics Forest</h3><p class="small">Six structured phases, blending, sound recognition and decodable words.</p><div class="progress"><i id="phonicsBar" style="width:0"></i></div></button>
-<button class="card path" id="mathStart"><div class="icon">⛰️</div><h3>Maths Mountain</h3><p class="small">30-question sessions drawn from more than 240 generated tasks.</p><div class="progress"><i id="mathBar" style="width:0"></i></div></button>
-<button class="card path" data-go="progress"><div class="icon">🏆</div><h3>Progress Garden</h3><p class="small">Mastery, stars, streaks and parent-friendly results.</p><div class="progress"><i id="rewardBar" style="width:0"></i></div></button></div>
-<div class="offline-note">Human British recordings now use stable filename-based Wikimedia links. “Hear sound twice” and “Hear whole word” are separate actions. Internet is required only before Safari has cached a recording.</div>
-</section>
-<section id="phonics" class="screen"><div class="lesson-head"><button class="back" data-go="home">← Home</button><h2>Phonics Forest</h2><div></div></div><div class="phase-grid" id="phaseGrid"></div></section>
-<section id="phase" class="screen"><div class="lesson-head"><button class="back" data-go="phonics">← Phases</button><h2 id="phaseTitle">Phase</h2><div class="pill"><span id="phaseCount">1</span>/12</div></div><div class="lesson-card"><div class="stage" id="activityType">Listen</div><div class="big" id="soundText">s</div><div class="picture" id="soundPic">☀️</div><div class="word" id="soundWord">sun</div><div class="instruction" id="soundInstruction">Tap the sound and listen for the beginning of the word.</div><div class="mastery" id="mastery"></div><div class="actions"><button class="soft" id="hearSound">🔊 Hear sound twice</button><button class="soft" id="hearWord">🗣️ Hear whole word</button><button class="primary" id="phaseNext">Next</button></div><div class="status" id="audioStatus"></div></div></section>
-<section id="phonicsQuiz" class="screen"><div class="lesson-head"><button class="back" data-go="phonics">← Phonics</button><h2>Sound Challenge</h2><div class="pill"><span id="pqCount">1</span>/12</div></div><div class="lesson-card"><div class="stage">Listen and choose</div><div class="instruction" id="pqQuestion">Which sound starts the word?</div><button class="soft" id="pqAudio">🔊 Play</button><div class="choices" id="pqChoices"></div><div class="feedback" id="pqFeedback"></div><button class="primary hidden" id="pqNext">Next</button></div></section>
-<section id="maths" class="screen"><div class="lesson-head"><button class="back" data-go="home">← Home</button><h2>Maths Mountain</h2><div class="pill"><span id="mqCount">1</span>/30</div></div><div class="lesson-card"><div class="stage" id="mathType">Number challenge</div><div class="instruction" id="mathQuestion"></div><div class="choices" id="mathChoices"></div><div class="feedback" id="mathFeedback"></div><button class="primary hidden" id="mathNext">Next</button></div></section>
-<section id="progress" class="screen"><div class="lesson-head"><button class="back" data-go="home">← Home</button><h2>Progress Garden</h2><div></div></div><div class="metrics"><div class="card metric"><b id="pStars">0</b><div>Stars</div></div><div class="card metric"><b id="pSounds">0</b><div>Sounds explored</div></div><div class="card metric"><b id="pCorrect">0</b><div>Correct answers</div></div><div class="card metric"><b id="pMath">0</b><div>Maths sessions</div></div></div><div class="card" style="margin-top:16px"><h3>Audio licence and attribution</h3><div class="license">Pronunciation recordings: Association Shtooka / Judith Franck, female speaker from London, England. Licensed under Creative Commons Attribution 3.0 United States. Recordings are obtained through Wikimedia Commons. Sound-onset clips are adaptations made by BrightSteps. No endorsement by the original creators is implied.</div></div></section>
-</div><nav class="nav"><button class="active" data-go="home">🏠<br>Home</button><button data-go="phonics">🌲<br>Phonics</button><button id="navMath">⛰️<br>Maths</button><button data-go="progress">🏆<br>Progress</button></nav>
-<script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],shuffle=a=>[...a].sort(()=>Math.random()-.5),pick=a=>a[Math.floor(Math.random()*a.length)];
-const storeKey='brightsteps-v9';let state=JSON.parse(localStorage.getItem(storeKey)||'{"stars":0,"streak":1,"correct":0,"mathSessions":0,"mastery":{}}');const save=()=>{localStorage.setItem(storeKey,JSON.stringify(state));update()};
-const SOUNDS=[
-{s:'s',w:'sun',p:'☀️',cut:.54,d:.44},{s:'a',w:'apple',p:'🍎',cut:.31,d:.34},{s:'t',w:'table',p:'🪑',cut:.34,d:.30},{s:'p',w:'pen',p:'🖊️',cut:.35,d:.29},{s:'i',w:'ink',p:'🖋️',cut:.28,d:.32},{s:'n',w:'nose',p:'👃',cut:.36,d:.42},
-{s:'m',w:'mouse',p:'🐭',cut:.34,d:.48},{s:'d',w:'dog',p:'🐶',cut:.35,d:.29},{s:'g',w:'goat',p:'🐐',cut:.35,d:.30},{s:'o',w:'orange',p:'🍊',cut:.28,d:.35},{s:'c',w:'cat',p:'🐱',cut:.34,d:.30},{s:'k',w:'king',p:'👑',cut:.34,d:.30},
-{s:'e',w:'egg',p:'🥚',cut:.27,d:.32},{s:'u',w:'umbrella',p:'☂️',cut:.28,d:.35},{s:'r',w:'rabbit',p:'🐰',cut:.35,d:.43},{s:'h',w:'house',p:'🏠',cut:.33,d:.40},{s:'b',w:'ball',p:'⚽',cut:.35,d:.29},{s:'f',w:'fish',p:'🐟',cut:.35,d:.48},
-{s:'l',w:'lion',p:'🦁',cut:.34,d:.42},{s:'j',w:'jam',p:'🍓',cut:.35,d:.34},{s:'v',w:'violin',p:'🎻',cut:.35,d:.48},{s:'w',w:'water',p:'💧',cut:.34,d:.42},{s:'x',w:'box',p:'📦',cut:.68,d:.28},{s:'y',w:'yellow',p:'💛',cut:.35,d:.40},{s:'z',w:'zebra',p:'🦓',cut:.34,d:.50},{s:'qu',w:'queen',p:'👸',cut:.34,d:.46},
-{s:'ch',w:'chair',p:'🪑',cut:.34,d:.36},{s:'sh',w:'ship',p:'🚢',cut:.34,d:.48},{s:'th',w:'thin',p:'🪶',cut:.34,d:.42},{s:'ng',w:'ring',p:'💍',cut:.62,d:.38},{s:'nk',w:'pink',p:'🌸',cut:.68,d:.38}
-];
-const PHASES=[['s','a','t','p','i','n'],['m','d','g','o','c','k'],['e','u','r','h','b','f'],['l','j','v','w','x','y'],['z','qu','ch','sh','th'],['ng','nk','s','a','t','p']];
-const phaseNames=['First sounds','Build early words','More single sounds','Complete the alphabet','Digraph discoveries','Blend and review'];
-function update(){stars.textContent=state.stars;streak.textContent=state.streak;pStars.textContent=state.stars;pCorrect.textContent=state.correct;pMath.textContent=state.mathSessions;const explored=Object.keys(state.mastery).length;pSounds.textContent=explored;phonicsBar.style.width=Math.min(100,explored/31*100)+'%';mathBar.style.width=Math.min(100,state.mathSessions*10)+'%';rewardBar.style.width=Math.min(100,state.stars)+'%'}
-function go(id){$$('.screen').forEach(x=>x.classList.remove('active'));$('#'+id).classList.add('active');$$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.go===id));if(id==='phonics')renderPhases();if(id==='progress')update();scrollTo(0,0)}$$('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));
-function renderPhases(){phaseGrid.innerHTML='';PHASES.forEach((arr,i)=>{const b=document.createElement('button');b.className='phase';b.innerHTML=`<strong>Phase ${i+1}: ${phaseNames[i]}</strong><span class="small">${i<4?'Learn, hear and recognise':'Recognise, blend and review'}</span><div class="sound-list">${arr.join(' · ')}</div>`;b.onclick=()=>startPhase(i);phaseGrid.appendChild(b)});const q=document.createElement('button');q.className='phase';q.innerHTML='<strong>Mixed sound challenge</strong><span class="small">12 questions from learned sounds</span><div class="sound-list">🔊 → choose</div>';q.onclick=startPhonicsQuiz;phaseGrid.appendChild(q)}
-let phaseItems=[],phasePos=0,currentSound=null;function soundObj(k){return SOUNDS.find(x=>x.s===k)}
-function startPhase(i){phaseItems=[];PHASES[i].forEach(k=>{phaseItems.push(k,k)});phaseItems=shuffle(phaseItems);phasePos=0;phaseTitle.textContent=`Phase ${i+1}: ${phaseNames[i]}`;go('phase');showPhase()}
-function showPhase(){currentSound=soundObj(phaseItems[phasePos]);phaseCount.textContent=phasePos+1;soundText.textContent=currentSound.s;soundPic.textContent=currentSound.p;soundWord.textContent=currentSound.w;activityType.textContent=phasePos%2?'Say and repeat':'Listen for the first sound';soundInstruction.textContent=phasePos%2?`Say /${currentSound.s}/ twice, then say “${currentSound.w}”.`:`Listen to “${currentSound.w}”. The highlighted sound is /${currentSound.s}/.`;renderMastery(currentSound.s);audioStatus.textContent='';}
-function renderMastery(k){const n=state.mastery[k]||0;mastery.innerHTML='';for(let i=0;i<3;i++){const d=document.createElement('i');d.className='dot'+(i<n?' on':'');mastery.appendChild(d)}}
-const audioCache=new Map();let ctx;
-const AUDIO_URLS={"sun": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-sun.ogg", "apple": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-apple.ogg", "table": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-table.ogg", "pen": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-pen.ogg", "ink": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-ink.ogg", "nose": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-nose.ogg", "mouse": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-a_mouse.ogg", "dog": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-dog.ogg", "goat": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-goat.ogg", "orange": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-orange.ogg", "cat": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-cat.ogg", "king": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-king.ogg", "egg": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-egg.ogg", "umbrella": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-umbrella.ogg", "rabbit": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-rabbit.ogg", "house": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-house.ogg", "ball": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-ball.ogg", "fish": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-fish.ogg", "lion": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-lion.ogg", "jam": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-jam.ogg", "violin": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-violin.ogg", "water": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-water.ogg", "box": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-box.ogg", "yellow": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-yellow.ogg", "zebra": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-zebra.ogg", "queen": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-queen.ogg", "chair": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-chair.ogg", "ship": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-ship.ogg", "thin": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-thin.ogg", "ring": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-ring.ogg", "pink": "https://commons.wikimedia.org/wiki/Special:Redirect/file/En-uk-pink.ogg"}
-
-function resolveAudio(word){
-  const url=AUDIO_URLS[word];
-  if(!url) throw Error('No bundled audio address for '+word);
-  return Promise.resolve(url);
-}
-async function bufferFor(word){
-  const key='buf-'+word;
-  if(audioCache.has(key))return audioCache.get(key);
-  const url=await resolveAudio(word);
-  const r=await fetch(url,{mode:'cors',cache:'force-cache'});
-  if(!r.ok)throw Error('Audio file unavailable: '+word);
-  const ab=await r.arrayBuffer();
-  ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
-  const buf=await ctx.decodeAudioData(ab.slice(0));
-  audioCache.set(key,buf);
-  return buf;
-}
-async function playWord(o){
-  try{
-    audioStatus.textContent='';
-    const url=await resolveAudio(o.w);
-    const a=new Audio();
-    a.preload='auto';
-    a.src=url;
-    a.playbackRate=.92;
-    a.onerror=()=>{audioStatus.textContent='Could not load “'+o.w+'”. Tap again while online.'};
-    await a.play();
-    audioStatus.textContent='Human British recording: Judith Franck, London.';
-  }catch(e){
-    audioStatus.textContent='Could not load “'+o.w+'”. Tap again while online.';
-  }
-}
-async function playOnset(o){
-  try{
-    audioStatus.textContent='';
-    ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
-    await ctx.resume();
-    const buf=await bufferFor(o.w);
-    for(let n=0;n<2;n++){
-      const src=ctx.createBufferSource(),gain=ctx.createGain();
-      src.buffer=buf;src.connect(gain).connect(ctx.destination);
-      const when=ctx.currentTime+.08+n*(o.d+.38);
-      gain.gain.setValueAtTime(0,when);
-      gain.gain.linearRampToValueAtTime(1,when+.03);
-      gain.gain.setValueAtTime(1,when+Math.max(.05,o.d-.04));
-      gain.gain.linearRampToValueAtTime(0,when+o.d);
-      src.start(when,o.cut,o.d);
-    }
-    audioStatus.textContent='Human sound clip repeated twice.';
-  }catch(e){
-    audioStatus.textContent='The isolated sound could not be prepared. The whole-word button is separate; please try the sound again online.';
-  }
-}
-hearSound.onclick=()=>playOnset(currentSound);hearWord.onclick=()=>playWord(currentSound);phaseNext.onclick=()=>{state.mastery[currentSound.s]=Math.min(3,(state.mastery[currentSound.s]||0)+1);state.stars++;save();if(++phasePos<phaseItems.length)showPhase();else{alert('Phase complete! You earned stars.');go('phonics')}};
-let pq=[],pqPos=0,pqAnswer=null;function startPhonicsQuiz(){const learned=Object.keys(state.mastery);const pool=learned.length>=6?SOUNDS.filter(x=>learned.includes(x.s)):SOUNDS.slice(0,18);pq=shuffle(pool).slice(0,12);while(pq.length<12)pq.push(pick(pool));pqPos=0;go('phonicsQuiz');showPQ()}
-function showPQ(){pqAnswer=pq[pqPos];pqCount.textContent=pqPos+1;pqFeedback.textContent='';pqNext.classList.add('hidden');pqQuestion.textContent=`Which sound starts “${pqAnswer.w}”?`;pqChoices.innerHTML='';const opts=shuffle([pqAnswer,...shuffle(SOUNDS.filter(x=>x.s!==pqAnswer.s)).slice(0,2)]);opts.forEach(o=>{const b=document.createElement('button');b.className='choice';b.textContent=o.s;b.onclick=()=>{if(o.s===pqAnswer.s){b.classList.add('correct');pqFeedback.textContent='Brilliant!';state.stars++;state.correct++;state.mastery[o.s]=Math.min(3,(state.mastery[o.s]||0)+1);save();pqNext.classList.remove('hidden')}else{b.classList.add('wrong');pqFeedback.textContent='Listen again.';setTimeout(()=>b.classList.remove('wrong'),650)}};pqChoices.appendChild(b)});setTimeout(()=>playWord(pqAnswer),250)}pqAudio.onclick=()=>playWord(pqAnswer);pqNext.onclick=()=>{if(++pqPos<pq.length)showPQ();else{alert('Sound challenge complete!');go('phonics')}};
-function mc(correct,max=20){const s=new Set([correct]);while(s.size<3)s.add(Math.max(0,Math.min(max,correct+pick([-4,-3,-2,-1,1,2,3,4]))));return shuffle([...s])}
-function makeMath(){const type=pick(['add','sub','before','after','double','bond','missingAdd','missingSub','count2','pattern','compare','story']);let q,a,label='Number challenge',max=20;if(type==='add'){let x=1+Math.floor(Math.random()*10),y=Math.floor(Math.random()*(11-x));a=x+y;q=`What is ${x} + ${y}?`;label='Addition'}if(type==='sub'){let x=3+Math.floor(Math.random()*17),y=Math.floor(Math.random()*(x+1));a=x-y;q=`What is ${x} − ${y}?`;label='Subtraction'}if(type==='before'){a=1+Math.floor(Math.random()*19);q=`Which number comes before ${a+1}?`;label='Number order'}if(type==='after'){let x=Math.floor(Math.random()*19);a=x+1;q=`Which number comes after ${x}?`;label='Number order'}if(type==='double'){let x=1+Math.floor(Math.random()*10);a=x*2;q=`Double ${x} is…`;label='Doubles'}if(type==='bond'){let total=5+Math.floor(Math.random()*6),x=Math.floor(Math.random()*(total+1));a=total-x;q=`${x} + ? = ${total}`;label='Number bonds'}if(type==='missingAdd'){let x=1+Math.floor(Math.random()*9),a=1+Math.floor(Math.random()*9);q=`${x} + ? = ${x+a}`;label='Missing number'}if(type==='missingSub'){let x=6+Math.floor(Math.random()*14);a=Math.floor(Math.random()*x);q=`${x} − ? = ${x-a}`;label='Missing number'}if(type==='count2'){let x=Math.floor(Math.random()*6)*2;a=x+6;q=`What comes next? ${x}, ${x+2}, ${x+4}, …`;label='Count in twos'}if(type==='pattern'){let x=1+Math.floor(Math.random()*5);a=x+3;q=`What comes next? ${x}, ${x+1}, ${x+2}, …`;label='Patterns'}if(type==='compare'){let x=Math.floor(Math.random()*20),y=Math.floor(Math.random()*20);a=x>y?x:y;q=`Which is greater: ${x} or ${y}?`;label='Compare numbers'}if(type==='story'){let x=1+Math.floor(Math.random()*7),y=1+Math.floor(Math.random()*6);a=x+y;q=`There are ${x} birds. ${y} more arrive. How many birds now?`;label='Story problem'}return{q,a,label,opts:mc(a,Math.max(max,a+5))}}
-let maths=[],mpos=0,mcur;function startMath(){maths=Array.from({length:30},makeMath);mpos=0;go('maths');showMath()}function showMath(){mcur=maths[mpos];mqCount.textContent=mpos+1;mathType.textContent=mcur.label;mathQuestion.textContent=mcur.q;mathFeedback.textContent='';mathNext.classList.add('hidden');mathChoices.innerHTML='';mcur.opts.forEach(v=>{const b=document.createElement('button');b.className='choice';b.textContent=v;b.onclick=()=>{if(v===mcur.a){b.classList.add('correct');mathFeedback.textContent='Correct!';state.stars++;state.correct++;save();mathNext.classList.remove('hidden')}else{b.classList.add('wrong');mathFeedback.textContent='Try once more.';setTimeout(()=>b.classList.remove('wrong'),600)}};mathChoices.appendChild(b)})}mathNext.onclick=()=>{if(++mpos<maths.length)showMath();else{state.mathSessions++;save();alert('Maths Mountain complete!');go('home')}};mathStart.onclick=startMath;navMath.onclick=startMath;daily.onclick=()=>{Object.keys(state.mastery).length<6?startPhase(0):startPhonicsQuiz()};
-update();renderPhases();
-</script></body></html>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6c55e0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="BrightSteps">
+  <title>BrightSteps 2.0</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="sky" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div id="app" class="app-shell" aria-live="polite"></div>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="./app.js" defer></script>
+</body>
+</html>

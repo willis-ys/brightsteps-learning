@@ -106,35 +106,47 @@ function update(){$('#stars').textContent=state.stars;$('#streak').textContent=s
 function go(id){$$('.screen').forEach(x=>x.classList.remove('active'));$('#'+id).classList.add('active');$$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.go===id));if(id==='phonics')renderLetters();if(id==='rewards')renderBadges();if(id==='parents')update();}
 $$('[data-go]').forEach(x=>x.onclick=()=>go(x.dataset.go));
 function speak(text){if(!('speechSynthesis'in window))return; speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-GB';u.rate=.82;const v=speechSynthesis.getVoices().find(v=>v.lang==='en-GB');if(v)u.voice=v;speechSynthesis.speak(u);}
+const AUDIO_VERSION='v7';
 const audioCache=new Map();
-function getAudio(file){
-  if(!audioCache.has(file)){
-    const a=new Audio(file);
-    a.preload='auto';
-    a.load();
-    audioCache.set(file,a);
-  }
-  return audioCache.get(file);
-}
 let activeAudio=null;
+function audioUrl(file){return file+(file.includes('?')?'&':'?')+'v='+AUDIO_VERSION;}
+function getAudio(file){
+  const src=audioUrl(file);
+  if(!audioCache.has(src)){
+    const a=new Audio();
+    a.src=src;
+    a.preload='auto';
+    a.playsInline=true;
+    a.load();
+    audioCache.set(src,a);
+  }
+  return audioCache.get(src);
+}
 function stopAudio(){
   if(activeAudio){try{activeAudio.pause();activeAudio.currentTime=0;}catch(e){} activeAudio=null;}
 }
-function playClip(file){
+async function playClip(file){
   stopAudio();
-  const src=file+(file.includes('?')?'&':'?')+'v=5';
-  const a=new Audio(src);
+  const base=getAudio(file);
+  const a=base.cloneNode(true);
   a.preload='auto';
+  a.playsInline=true;
+  a.volume=1;
   activeAudio=a;
-  const start=()=>{try{a.currentTime=0;}catch(e){} a.play().catch(()=>{});};
-  if(a.readyState>=2) start(); else a.addEventListener('canplay',start,{once:true});
+  try{
+    if(a.readyState<2){await new Promise((resolve,reject)=>{a.addEventListener('canplaythrough',resolve,{once:true});a.addEventListener('error',reject,{once:true});a.load();});}
+    a.currentTime=0;
+    await a.play();
+  }catch(err){
+    // Retry from the already-loaded cached element. This is useful on iPad Safari.
+    try{base.pause();base.currentTime=0;activeAudio=base;await base.play();}catch(e){}
+  }
   a.addEventListener('ended',()=>{if(activeAudio===a)activeAudio=null;},{once:true});
-  a.load();
 }
 function audio(file){playClip(file);}
 function phonicsAudio(file){playClip(file);}
 function preloadLessonAudio(){
-  DATA.forEach(x=>{getAudio('audio/sound_'+x.key+'.wav?v=5');getAudio('audio/word_'+x.key+'.wav?v=5');});
+  DATA.forEach(x=>{getAudio('audio/sound_'+x.key+'.wav');getAudio('audio/word_'+x.key+'.wav');});
 }
 function item(key){return DATA.find(x=>x.key===key);}
 function renderLetters(){const g=$('#letterGrid');g.innerHTML='';ORDER.forEach(k=>{const d=item(k),b=document.createElement('button');b.className='letter'+(state.learned.includes(k)?' learned':'');b.textContent=d.letter;b.onclick=()=>openLesson(k);g.appendChild(b);});}

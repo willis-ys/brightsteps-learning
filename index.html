@@ -116,12 +116,30 @@ function getAudio(file){
   }
   return audioCache.get(file);
 }
+let phonicsReplayTimer=null;
 function audio(file){
+  clearTimeout(phonicsReplayTimer);
   const a=getAudio(file);
   try{a.pause();a.currentTime=0;}catch(e){}
   const playNow=()=>a.play().catch(()=>{});
   if(a.readyState>=2) playNow();
   else a.addEventListener('canplaythrough',playNow,{once:true});
+}
+function phonicsAudio(file){
+  clearTimeout(phonicsReplayTimer);
+  const a=getAudio(file);
+  try{a.pause();a.currentTime=0;}catch(e){}
+  const firstPlay=()=>{
+    a.play().catch(()=>{});
+    a.addEventListener('ended',()=>{
+      phonicsReplayTimer=setTimeout(()=>{
+        try{a.currentTime=0;}catch(e){}
+        a.play().catch(()=>{});
+      },180);
+    },{once:true});
+  };
+  if(a.readyState>=2) firstPlay();
+  else a.addEventListener('canplaythrough',firstPlay,{once:true});
 }
 function preloadLessonAudio(){
   DATA.forEach(x=>{getAudio('audio/sound_'+x.key+'.wav');getAudio('audio/word_'+x.key+'.wav');});
@@ -130,14 +148,14 @@ function item(key){return DATA.find(x=>x.key===key);}
 function renderLetters(){const g=$('#letterGrid');g.innerHTML='';ORDER.forEach(k=>{const d=item(k),b=document.createElement('button');b.className='letter'+(state.learned.includes(k)?' learned':'');b.textContent=d.letter;b.onclick=()=>openLesson(k);g.appendChild(b);});}
 function openLesson(k){current=item(k);step=1;if(!state.learned.includes(k)){state.learned.push(k);save();}go('phonicsLesson');renderLesson();}
 function renderLesson(){$('#lessonStep').textContent=step;$('#bigLetter').textContent=current.letter;$('#soundSymbol').textContent=current.symbol;$('#picture').textContent=current.emoji;$('#word').textContent=current.word;
-if(step===1){$('#stageText').textContent='1. Listen';$('#lessonInstruction').textContent='Tap the speaker and listen to the pure sound.';$('#lessonNext').textContent='Next: Repeat';}
+if(step===1){$('#stageText').textContent='1. Listen';$('#lessonInstruction').textContent='Tap the speaker and listen to the pure sound twice.';$('#lessonNext').textContent='Next: Repeat';}
 if(step===2){$('#stageText').textContent='2. Repeat';$('#lessonInstruction').textContent='Listen again. Then say the sound yourself without adding “uh”.';$('#lessonNext').textContent='Next: Connect';}
 if(step===3){$('#stageText').textContent='3. Connect';$('#lessonInstruction').textContent=current.word+' begins with this sound. Listen to the word and say it.';$('#lessonNext').textContent='Earn a star';}}
-$('#playSound').onclick=()=>audio('audio/sound_'+current.key+'.wav');$('#playWord').onclick=()=>audio('audio/word_'+current.key+'.wav');
-$('#lessonNext').onclick=()=>{if(step<3){step++;renderLesson();audio('audio/sound_'+current.key+'.wav');}else{state.stars++;save();speak('Wonderful learning');go('phonics');}};
+$('#playSound').onclick=()=>phonicsAudio('audio/sound_'+current.key+'.wav');$('#playWord').onclick=()=>audio('audio/word_'+current.key+'.wav');
+$('#lessonNext').onclick=()=>{if(step<3){step++;renderLesson();phonicsAudio('audio/sound_'+current.key+'.wav');}else{state.stars++;save();speak('Wonderful learning');go('phonics');}};
 function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
 function startPractice(){const pool=state.learned.length>=3?state.learned:ORDER.slice(0,6);quiz=shuffle(pool).slice(0,8);qpos=0;go('practice');showQ();}
-function showQ(){const k=quiz[qpos],correct=item(k);$('#quizCount').textContent=qpos+1;$('#feedback').textContent='';$('#quizNext').classList.add('hidden');$('#question').textContent='Which letter makes this sound?';const opts=shuffle([correct,...shuffle(DATA.filter(x=>x.key!==k)).slice(0,2)]);const c=$('#choices');c.innerHTML='';opts.forEach(o=>{const b=document.createElement('button');b.className='choice';b.textContent=o.letter;b.onclick=()=>{if(o.key===k){b.classList.add('correct');$('#feedback').textContent='Brilliant!';state.stars++;state.correct++;save();$('#quizNext').classList.remove('hidden');}else{b.classList.add('wrong');$('#feedback').textContent='Listen once more.';setTimeout(()=>b.classList.remove('wrong'),600);}};c.appendChild(b);});setTimeout(()=>audio('audio/sound_'+k+'.wav'),250);$('#replay').onclick=()=>audio('audio/sound_'+k+'.wav');}
+function showQ(){const k=quiz[qpos],correct=item(k);$('#quizCount').textContent=qpos+1;$('#feedback').textContent='';$('#quizNext').classList.add('hidden');$('#question').textContent='Which letter makes this sound?';const opts=shuffle([correct,...shuffle(DATA.filter(x=>x.key!==k)).slice(0,2)]);const c=$('#choices');c.innerHTML='';opts.forEach(o=>{const b=document.createElement('button');b.className='choice';b.textContent=o.letter;b.onclick=()=>{if(o.key===k){b.classList.add('correct');$('#feedback').textContent='Brilliant!';state.stars++;state.correct++;save();$('#quizNext').classList.remove('hidden');}else{b.classList.add('wrong');$('#feedback').textContent='Listen once more.';setTimeout(()=>b.classList.remove('wrong'),600);}};c.appendChild(b);});setTimeout(()=>phonicsAudio('audio/sound_'+k+'.wav'),250);$('#replay').onclick=()=>phonicsAudio('audio/sound_'+k+'.wav');}
 $('#quizNext').onclick=()=>{qpos++;if(qpos>=quiz.length){speak('Challenge complete');go('home');}else showQ();};
 function makeMath(){const arr=[];for(let i=0;i<10;i++){const type=i%4;let q,a;if(type===0){let x=3+Math.floor(Math.random()*8),y=1+Math.floor(Math.random()*5);q=`${x} + ${y} = ?`;a=x+y;}else if(type===1){let x=7+Math.floor(Math.random()*9),y=1+Math.floor(Math.random()*6);if(y>x)y=2;q=`${x} − ${y} = ?`;a=x-y;}else if(type===2){let x=2+Math.floor(Math.random()*8);q=`What comes after ${x}?`;a=x+1;}else{let x=2+Math.floor(Math.random()*5);q=`What is double ${x}?`;a=x*2;}arr.push({q,a});}return arr;}
 function startMath(){mathQuiz=makeMath();mpos=0;go('maths');showMath();}

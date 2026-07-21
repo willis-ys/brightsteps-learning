@@ -1,21 +1,8 @@
-BrightSteps Learning App
+BrightSteps Academy v9
 
-This package is a Progressive Web App designed for iPad.
+Upload the contents of this folder to the root of your GitHub Pages repository.
+The first use of each human pronunciation requires internet access. The service worker and browser cache then retain fetched resources where supported.
 
-FILES TO UPLOAD
-- index.html
-- manifest.webmanifest
-- service-worker.js
-- audio folder
-- icons folder
+Important: the source collection contains whole-word British-English recordings. BrightSteps derives short onset clips in the browser for phonics practice. These are human voice clips, not synthetic TTS, but they are not a substitute for a formally validated commercial phonics recording set.
 
-HOSTING
-Upload the whole folder to GitHub Pages, Netlify Drop, Cloudflare Pages, or another static host.
-Then open the resulting HTTPS link in Safari and choose Share > Add to Home Screen.
-
-AUDIO
-Pure phonics sounds are stored as dedicated WAV files in the audio folder.
-Instructions and longer words may use the iPad British English voice.
-
-The phoneme clips are machine-generated British approximations. For classroom-grade pronunciation,
-replace the WAV files with recordings from a qualified British phonics educator while keeping the same filenames.
+Audio attribution is in LICENSE-AUDIO.txt and in the Parent/Progress screen.

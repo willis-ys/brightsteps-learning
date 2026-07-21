@@ -17,7 +17,7 @@
 <button class="card path" data-go="phonics"><div class="icon">🌲</div><h3>Phonics Forest</h3><p class="small">Six structured phases, blending, sound recognition and decodable words.</p><div class="progress"><i id="phonicsBar" style="width:0"></i></div></button>
 <button class="card path" id="mathStart"><div class="icon">⛰️</div><h3>Maths Mountain</h3><p class="small">30-question sessions drawn from more than 240 generated tasks.</p><div class="progress"><i id="mathBar" style="width:0"></i></div></button>
 <button class="card path" data-go="progress"><div class="icon">🏆</div><h3>Progress Garden</h3><p class="small">Mastery, stars, streaks and parent-friendly results.</p><div class="progress"><i id="rewardBar" style="width:0"></i></div></button></div>
-<div class="offline-note">The human recordings are downloaded from Wikimedia Commons the first time each sound is used, then cached for later visits.</div>
+<div class="offline-note">Human British recordings now use direct fixed audio links, avoiding the unreliable Wikimedia API lookup. Internet is required only when a recording has not yet been cached by Safari.</div>
 </section>
 <section id="phonics" class="screen"><div class="lesson-head"><button class="back" data-go="home">← Home</button><h2>Phonics Forest</h2><div></div></div><div class="phase-grid" id="phaseGrid"></div></section>
 <section id="phase" class="screen"><div class="lesson-head"><button class="back" data-go="phonics">← Phases</button><h2 id="phaseTitle">Phase</h2><div class="pill"><span id="phaseCount">1</span>/12</div></div><div class="lesson-card"><div class="stage" id="activityType">Listen</div><div class="big" id="soundText">s</div><div class="picture" id="soundPic">☀️</div><div class="word" id="soundWord">sun</div><div class="instruction" id="soundInstruction">Tap the sound and listen for the beginning of the word.</div><div class="mastery" id="mastery"></div><div class="actions"><button class="soft" id="hearSound">🔊 Hear sound twice</button><button class="soft" id="hearWord">🗣️ Hear whole word</button><button class="primary" id="phaseNext">Next</button></div><div class="status" id="audioStatus"></div></div></section>
@@ -44,11 +44,63 @@ let phaseItems=[],phasePos=0,currentSound=null;function soundObj(k){return SOUND
 function startPhase(i){phaseItems=[];PHASES[i].forEach(k=>{phaseItems.push(k,k)});phaseItems=shuffle(phaseItems);phasePos=0;phaseTitle.textContent=`Phase ${i+1}: ${phaseNames[i]}`;go('phase');showPhase()}
 function showPhase(){currentSound=soundObj(phaseItems[phasePos]);phaseCount.textContent=phasePos+1;soundText.textContent=currentSound.s;soundPic.textContent=currentSound.p;soundWord.textContent=currentSound.w;activityType.textContent=phasePos%2?'Say and repeat':'Listen for the first sound';soundInstruction.textContent=phasePos%2?`Say /${currentSound.s}/ twice, then say “${currentSound.w}”.`:`Listen to “${currentSound.w}”. The highlighted sound is /${currentSound.s}/.`;renderMastery(currentSound.s);audioStatus.textContent='';}
 function renderMastery(k){const n=state.mastery[k]||0;mastery.innerHTML='';for(let i=0;i<3;i++){const d=document.createElement('i');d.className='dot'+(i<n?' on':'');mastery.appendChild(d)}}
-const audioCache=new Map();let ctx;function apiUrl(word){const title='File:En-uk-'+word+'.ogg';return 'https://commons.wikimedia.org/w/api.php?action=query&prop=videoinfo&viprop=url%7Cderivatives&titles='+encodeURIComponent(title)+'&format=json&origin=*'}
-async function resolveAudio(word){if(audioCache.has(word))return audioCache.get(word);const local=localStorage.getItem('audio-url-'+word);if(local){audioCache.set(word,local);return local}const r=await fetch(apiUrl(word));if(!r.ok)throw Error('Could not reach audio library');const j=await r.json();const page=Object.values(j.query.pages)[0],vi=page.videoinfo&&page.videoinfo[0];if(!vi)throw Error('Recording not available');const ds=vi.derivatives||[];const mp3=ds.find(x=>/audio\/mpeg/.test(x.type||''))||ds.find(x=>String(x.src||'').endsWith('.mp3'));const url=(mp3&&mp3.src)||vi.url;localStorage.setItem('audio-url-'+word,url);audioCache.set(word,url);return url}
-async function bufferFor(word){const key='buf-'+word;if(audioCache.has(key))return audioCache.get(key);const url=await resolveAudio(word);const r=await fetch(url,{mode:'cors'});const ab=await r.arrayBuffer();ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const buf=await ctx.decodeAudioData(ab.slice(0));audioCache.set(key,buf);return buf}
-async function playWord(o){try{audioStatus.textContent='Loading human British recording…';const url=await resolveAudio(o.w);const a=new Audio(url);a.playbackRate=.92;await a.play();audioStatus.textContent='Human recording: Judith Franck, London.'}catch(e){audioStatus.textContent='Audio needs an internet connection on first use.'}}
-async function playOnset(o){try{audioStatus.textContent='Preparing the human sound clip…';ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();await ctx.resume();const buf=await bufferFor(o.w);for(let n=0;n<2;n++){const src=ctx.createBufferSource(),gain=ctx.createGain();src.buffer=buf;src.connect(gain).connect(ctx.destination);const when=ctx.currentTime+.06+n*(o.d+.34);gain.gain.setValueAtTime(0,when);gain.gain.linearRampToValueAtTime(1,when+.025);gain.gain.setValueAtTime(1,when+Math.max(.04,o.d-.035));gain.gain.linearRampToValueAtTime(0,when+o.d);src.start(when,o.cut,o.d)}audioStatus.textContent='Human onset clip repeated twice.'}catch(e){audioStatus.textContent='Could not isolate this sound. Playing the whole word instead.';playWord(o)}}
+const audioCache=new Map();let ctx;
+const AUDIO_URLS={"sun": "https://upload.wikimedia.org/wikipedia/commons/3/35/En-uk-sun.ogg", "apple": "https://upload.wikimedia.org/wikipedia/commons/c/c8/En-uk-apple.ogg", "table": "https://upload.wikimedia.org/wikipedia/commons/5/57/En-uk-table.ogg", "pen": "https://upload.wikimedia.org/wikipedia/commons/8/8c/En-uk-pen.ogg", "ink": "https://upload.wikimedia.org/wikipedia/commons/1/12/En-uk-ink.ogg", "nose": "https://upload.wikimedia.org/wikipedia/commons/b/b0/En-uk-nose.ogg", "mouse": "https://upload.wikimedia.org/wikipedia/commons/0/0d/En-uk-mouse.ogg", "dog": "https://upload.wikimedia.org/wikipedia/commons/1/15/En-uk-dog.ogg", "goat": "https://upload.wikimedia.org/wikipedia/commons/b/b8/En-uk-goat.ogg", "orange": "https://upload.wikimedia.org/wikipedia/commons/3/30/En-uk-orange.ogg", "cat": "https://upload.wikimedia.org/wikipedia/commons/4/45/En-uk-cat.ogg", "king": "https://upload.wikimedia.org/wikipedia/commons/f/f6/En-uk-king.ogg", "egg": "https://upload.wikimedia.org/wikipedia/commons/a/a1/En-uk-egg.ogg", "umbrella": "https://upload.wikimedia.org/wikipedia/commons/a/ab/En-uk-umbrella.ogg", "rabbit": "https://upload.wikimedia.org/wikipedia/commons/9/94/En-uk-rabbit.ogg", "house": "https://upload.wikimedia.org/wikipedia/commons/d/d1/En-uk-house.ogg", "ball": "https://upload.wikimedia.org/wikipedia/commons/7/7b/En-uk-ball.ogg", "fish": "https://upload.wikimedia.org/wikipedia/commons/f/f8/En-uk-fish.ogg", "lion": "https://upload.wikimedia.org/wikipedia/commons/0/0e/En-uk-lion.ogg", "jam": "https://upload.wikimedia.org/wikipedia/commons/1/19/En-uk-jam.ogg", "violin": "https://upload.wikimedia.org/wikipedia/commons/9/91/En-uk-violin.ogg", "water": "https://upload.wikimedia.org/wikipedia/commons/1/1a/En-uk-water.ogg", "box": "https://upload.wikimedia.org/wikipedia/commons/6/67/En-uk-box.ogg", "yellow": "https://upload.wikimedia.org/wikipedia/commons/6/65/En-uk-yellow.ogg", "zebra": "https://upload.wikimedia.org/wikipedia/commons/8/8e/En-uk-zebra.ogg", "queen": "https://upload.wikimedia.org/wikipedia/commons/7/78/En-uk-queen.ogg", "chair": "https://upload.wikimedia.org/wikipedia/commons/1/11/En-uk-chair.ogg", "ship": "https://upload.wikimedia.org/wikipedia/commons/6/63/En-uk-ship.ogg", "thin": "https://upload.wikimedia.org/wikipedia/commons/3/30/En-uk-thin.ogg", "ring": "https://upload.wikimedia.org/wikipedia/commons/5/5f/En-uk-ring.ogg", "pink": "https://upload.wikimedia.org/wikipedia/commons/2/25/En-uk-pink.ogg"};
+
+function resolveAudio(word){
+  const url=AUDIO_URLS[word];
+  if(!url) throw Error('No bundled audio address for '+word);
+  return Promise.resolve(url);
+}
+async function bufferFor(word){
+  const key='buf-'+word;
+  if(audioCache.has(key))return audioCache.get(key);
+  const url=await resolveAudio(word);
+  const r=await fetch(url,{mode:'cors',cache:'force-cache'});
+  if(!r.ok)throw Error('Audio file unavailable: '+word);
+  const ab=await r.arrayBuffer();
+  ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+  const buf=await ctx.decodeAudioData(ab.slice(0));
+  audioCache.set(key,buf);
+  return buf;
+}
+async function playWord(o){
+  try{
+    audioStatus.textContent='';
+    const url=await resolveAudio(o.w);
+    const a=new Audio();
+    a.preload='auto';
+    a.src=url;
+    a.playbackRate=.92;
+    a.onerror=()=>{audioStatus.textContent='Could not load “'+o.w+'”. Tap again while online.'};
+    await a.play();
+    audioStatus.textContent='Human British recording: Judith Franck, London.';
+  }catch(e){
+    audioStatus.textContent='Could not load “'+o.w+'”. Tap again while online.';
+  }
+}
+async function playOnset(o){
+  try{
+    audioStatus.textContent='';
+    ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    await ctx.resume();
+    const buf=await bufferFor(o.w);
+    for(let n=0;n<2;n++){
+      const src=ctx.createBufferSource(),gain=ctx.createGain();
+      src.buffer=buf;src.connect(gain).connect(ctx.destination);
+      const when=ctx.currentTime+.08+n*(o.d+.38);
+      gain.gain.setValueAtTime(0,when);
+      gain.gain.linearRampToValueAtTime(1,when+.03);
+      gain.gain.setValueAtTime(1,when+Math.max(.05,o.d-.04));
+      gain.gain.linearRampToValueAtTime(0,when+o.d);
+      src.start(when,o.cut,o.d);
+    }
+    audioStatus.textContent='Human sound clip repeated twice.';
+  }catch(e){
+    audioStatus.textContent='Playing the whole British word recording instead.';
+    await playWord(o);
+  }
+}
 hearSound.onclick=()=>playOnset(currentSound);hearWord.onclick=()=>playWord(currentSound);phaseNext.onclick=()=>{state.mastery[currentSound.s]=Math.min(3,(state.mastery[currentSound.s]||0)+1);state.stars++;save();if(++phasePos<phaseItems.length)showPhase();else{alert('Phase complete! You earned stars.');go('phonics')}};
 let pq=[],pqPos=0,pqAnswer=null;function startPhonicsQuiz(){const learned=Object.keys(state.mastery);const pool=learned.length>=6?SOUNDS.filter(x=>learned.includes(x.s)):SOUNDS.slice(0,18);pq=shuffle(pool).slice(0,12);while(pq.length<12)pq.push(pick(pool));pqPos=0;go('phonicsQuiz');showPQ()}
 function showPQ(){pqAnswer=pq[pqPos];pqCount.textContent=pqPos+1;pqFeedback.textContent='';pqNext.classList.add('hidden');pqQuestion.textContent=`Which sound starts “${pqAnswer.w}”?`;pqChoices.innerHTML='';const opts=shuffle([pqAnswer,...shuffle(SOUNDS.filter(x=>x.s!==pqAnswer.s)).slice(0,2)]);opts.forEach(o=>{const b=document.createElement('button');b.className='choice';b.textContent=o.s;b.onclick=()=>{if(o.s===pqAnswer.s){b.classList.add('correct');pqFeedback.textContent='Brilliant!';state.stars++;state.correct++;state.mastery[o.s]=Math.min(3,(state.mastery[o.s]||0)+1);save();pqNext.classList.remove('hidden')}else{b.classList.add('wrong');pqFeedback.textContent='Listen again.';setTimeout(()=>b.classList.remove('wrong'),650)}};pqChoices.appendChild(b)});setTimeout(()=>playWord(pqAnswer),250)}pqAudio.onclick=()=>playWord(pqAnswer);pqNext.onclick=()=>{if(++pqPos<pq.length)showPQ();else{alert('Sound challenge complete!');go('phonics')}};

@@ -106,7 +106,26 @@ function update(){$('#stars').textContent=state.stars;$('#streak').textContent=s
 function go(id){$$('.screen').forEach(x=>x.classList.remove('active'));$('#'+id).classList.add('active');$$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.go===id));if(id==='phonics')renderLetters();if(id==='rewards')renderBadges();if(id==='parents')update();}
 $$('[data-go]').forEach(x=>x.onclick=()=>go(x.dataset.go));
 function speak(text){if(!('speechSynthesis'in window))return; speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-GB';u.rate=.82;const v=speechSynthesis.getVoices().find(v=>v.lang==='en-GB');if(v)u.voice=v;speechSynthesis.speak(u);}
-function audio(file){const a=new Audio(file);a.play().catch(()=>{});}
+const audioCache=new Map();
+function getAudio(file){
+  if(!audioCache.has(file)){
+    const a=new Audio(file);
+    a.preload='auto';
+    a.load();
+    audioCache.set(file,a);
+  }
+  return audioCache.get(file);
+}
+function audio(file){
+  const a=getAudio(file);
+  try{a.pause();a.currentTime=0;}catch(e){}
+  const playNow=()=>a.play().catch(()=>{});
+  if(a.readyState>=2) playNow();
+  else a.addEventListener('canplaythrough',playNow,{once:true});
+}
+function preloadLessonAudio(){
+  DATA.forEach(x=>{getAudio('audio/sound_'+x.key+'.wav');getAudio('audio/word_'+x.key+'.wav');});
+}
 function item(key){return DATA.find(x=>x.key===key);}
 function renderLetters(){const g=$('#letterGrid');g.innerHTML='';ORDER.forEach(k=>{const d=item(k),b=document.createElement('button');b.className='letter'+(state.learned.includes(k)?' learned':'');b.textContent=d.letter;b.onclick=()=>openLesson(k);g.appendChild(b);});}
 function openLesson(k){current=item(k);step=1;if(!state.learned.includes(k)){state.learned.push(k);save();}go('phonicsLesson');renderLesson();}
@@ -127,6 +146,6 @@ $('#mathNext').onclick=()=>{mpos++;if(mpos>=mathQuiz.length){state.mathSessions+
 $('#dailyStart').onclick=()=>{startPractice();};document.querySelector('[data-go="maths"].path-card').onclick=startMath;document.querySelector('[data-go="phonics"].path-card').onclick=()=>go('phonics');document.querySelector('[data-go="rewards"].path-card').onclick=()=>go('rewards');
 function renderBadges(){const defs=[['🌱','First Sound',1],['🦋','Six Sounds',6],['🌈','Halfway Hero',13],['🏆','A–Z Champion',26],['⭐','Ten Stars',10,'star'],['👑','Fifty Stars',50,'star'],['🧠','20 Correct',20,'correct'],['🔢','Maths Explorer',3,'math']];const g=$('#badgesGrid');g.innerHTML='';defs.forEach(d=>{let ok=d[3]==='star'?state.stars>=d[2]:d[3]==='correct'?state.correct>=d[2]:d[3]==='math'?state.mathSessions>=d[2]:state.learned.length>=d[2];const x=document.createElement('div');x.className='badge'+(ok?' unlocked':'');x.innerHTML=`<div class="bicon">${d[0]}</div><h3>${d[1]}</h3><div class="small">${ok?'Unlocked':'Keep learning'}</div>`;g.appendChild(x);});}
 $('#resetProgress').onclick=()=>{if(confirm('Reset all learning progress?')){localStorage.removeItem('brightsteps');location.reload();}};
-update();if('serviceWorker'in navigator)navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+update();preloadLessonAudio();if('serviceWorker'in navigator)navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
 </script>
 </body></html>

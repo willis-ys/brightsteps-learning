@@ -1,0 +1,76 @@
+name: Deploy BrightSteps 2.0.1
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout BrightSteps
+        uses: actions/checkout@v6
+
+      - name: Checkout licensed UK phonics audio
+        uses: actions/checkout@v6
+        with:
+          repository: hellodeborahuk/buzzphonics
+          path: _buzzphonics
+          persist-credentials: false
+
+      - name: Build complete offline site
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          rm -rf _site
+          mkdir -p _site/audio/phonemes
+
+          cp index.html styles.css app.js manifest.webmanifest service-worker.js \
+             .nojekyll LICENSE THIRD_PARTY_NOTICES.md _site/
+
+          cp -R icons _site/icons
+
+          cp _buzzphonics/public/sounds/*.m4a _site/audio/phonemes/
+
+          AUDIO_COUNT=$(find _site/audio/phonemes -maxdepth 1 -type f -name '*.m4a' | wc -l)
+
+          echo "Installed ${AUDIO_COUNT} local phonics recordings"
+
+          test "$AUDIO_COUNT" -ge 46
+          test -s _site/audio/phonemes/m.m4a
+          test -s _site/audio/phonemes/w.m4a
+          test -s _site/audio/phonemes/th.m4a
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload complete website
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

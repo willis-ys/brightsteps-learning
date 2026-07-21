@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#6C5CE7">
+<link rel="manifest" href="manifest.webmanifest">
+<title>BrightSteps Learning</title>
+<style>
+:root{--purple:#6C5CE7;--green:#00B894;--yellow:#FFD166;--pink:#FF7AA2;--ink:#24324A;--muted:#65738A;--panel:#fff;--bg:#F7F5FF}
+*{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:linear-gradient(180deg,#f8f6ff,#eef9f6);color:var(--ink);min-height:100vh}
+button{font:inherit} .app{max-width:1100px;margin:auto;padding:18px 18px 100px} .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.logo{font-size:clamp(24px,4vw,38px);font-weight:900} .logo span{color:var(--purple)} .stats{display:flex;gap:10px} .pill{background:#fff;padding:10px 14px;border-radius:999px;font-weight:800;box-shadow:0 5px 16px #2d2b4a18}
+.hero{margin-top:18px;background:linear-gradient(135deg,#6C5CE7,#8E7CFF);border-radius:30px;padding:28px;color:white;display:grid;grid-template-columns:1.25fr .75fr;align-items:center;box-shadow:0 18px 40px #6c5ce738}
+.hero h1{font-size:clamp(36px,7vw,68px);margin:0 0 10px} .hero p{font-size:20px;line-height:1.5;max-width:620px} .hero-art{font-size:clamp(90px,16vw,170px);text-align:center}
+.primary{border:0;background:var(--yellow);color:#40381e;padding:16px 22px;border-radius:18px;font-weight:900;font-size:20px;box-shadow:0 8px 0 #d9a834;cursor:pointer}
+.primary:active{transform:translateY(5px);box-shadow:0 3px 0 #d9a834} .section-title{display:flex;justify-content:space-between;align-items:center;margin:30px 2px 14px}
+.section-title h2{margin:0;font-size:28px} .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px} .card{background:#fff;border-radius:26px;padding:20px;box-shadow:0 12px 30px #23304a12}
+.path-card{cursor:pointer;position:relative;overflow:hidden;min-height:210px} .path-card .icon{font-size:58px} .path-card h3{font-size:25px;margin:8px 0} .path-card p{color:var(--muted);line-height:1.4} .progress{height:12px;background:#edf0f5;border-radius:999px;overflow:hidden} .progress>div{height:100%;background:linear-gradient(90deg,var(--green),#58d9b0)}
+.nav{position:fixed;left:50%;transform:translateX(-50%);bottom:16px;width:min(720px,calc(100% - 28px));background:#fff;border-radius:24px;padding:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;box-shadow:0 14px 40px #24324a2b;z-index:20}
+.nav button{border:0;background:transparent;border-radius:16px;padding:10px;font-weight:800;color:var(--muted)} .nav button.active{background:#eeeaff;color:var(--purple)}
+.screen{display:none} .screen.active{display:block} .lesson-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:12px 0 18px}
+.back{border:0;background:#fff;border-radius:15px;padding:12px 16px;font-weight:800;box-shadow:0 5px 16px #24324a18}
+.lesson-card{background:#fff;border-radius:30px;padding:26px;box-shadow:0 14px 34px #24324a18;text-align:center}
+.stage{font-size:15px;font-weight:900;color:var(--purple);text-transform:uppercase;letter-spacing:.08em} .big-letter{font-size:clamp(150px,30vw,270px);font-weight:950;line-height:.95;color:var(--purple)}
+.sound-line{font-size:30px;font-weight:900;margin:8px} .picture{font-size:100px} .word{font-size:38px;font-weight:900} .instruction{font-size:22px;color:var(--muted);margin:12px auto;max-width:650px}
+.action-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:20px} .action{border:0;border-radius:18px;padding:16px 20px;font-size:19px;font-weight:900;background:#eef0ff;color:var(--purple)}
+.action.green{background:#dbf7ee;color:#087a59} .letter-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:12px} .letter{border:0;aspect-ratio:1;border-radius:20px;background:#fff;font-size:38px;font-weight:950;color:var(--purple);box-shadow:0 7px 18px #24324a14}
+.letter.learned{outline:4px solid #8ee2c4} .choices{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px} .choice{border:0;background:#fff;border-radius:24px;min-height:160px;font-size:54px;font-weight:950;box-shadow:0 10px 24px #24324a18}
+.choice.correct{background:#dcf7eb;outline:4px solid var(--green)} .choice.wrong{background:#ffe2e8;outline:4px solid var(--pink)} .feedback{min-height:45px;font-size:26px;font-weight:900;margin-top:15px}
+.badges{display:grid;grid-template-columns:repeat(4,1fr);gap:14px} .badge{text-align:center;background:#fff;border-radius:22px;padding:18px;box-shadow:0 8px 20px #24324a12} .badge .bicon{font-size:58px;filter:grayscale(1);opacity:.35} .badge.unlocked .bicon{filter:none;opacity:1}
+.parent-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px} .metric{font-size:38px;font-weight:950;color:var(--purple)} .small{color:var(--muted)} .hidden{display:none!important}
+@media(max-width:760px){.hero{grid-template-columns:1fr}.hero-art{display:none}.cards{grid-template-columns:1fr}.letter-grid{grid-template-columns:repeat(4,1fr)}.choices{grid-template-columns:1fr 1fr}.badges{grid-template-columns:repeat(2,1fr)}.parent-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top"><div class="logo">🌟 <span>BrightSteps</span> Learning</div><div class="stats"><div class="pill">⭐ <span id="stars">0</span></div><div class="pill">🔥 <span id="streak">1</span></div></div></header>
+
+<section id="home" class="screen active">
+<div class="hero"><div><div class="stage">Today's adventure</div><h1>Learn. Play. Grow.</h1><p>A guided 15-minute lesson combining British phonics and age-appropriate maths.</p><button class="primary" id="dailyStart">Start today's lesson</button></div><div class="hero-art">🦊📚</div></div>
+<div class="section-title"><h2>Learning paths</h2><span class="small">Choose a subject</span></div>
+<div class="cards">
+<div class="card path-card" data-go="phonics"><div class="icon">🔤</div><h3>Phonics Forest</h3><p>Learn pure letter sounds, repeat them, and connect sounds to words.</p><div class="progress"><div id="phonicsBar" style="width:0%"></div></div></div>
+<div class="card path-card" data-go="maths"><div class="icon">🔢</div><h3>Maths Mountain</h3><p>Counting, number bonds, addition, subtraction and patterns.</p><div class="progress"><div id="mathBar" style="width:15%"></div></div></div>
+<div class="card path-card" data-go="rewards"><div class="icon">🎁</div><h3>Treasure Room</h3><p>Collect stars, unlock badges and celebrate progress.</p><div class="progress"><div id="rewardBar" style="width:0%"></div></div></div>
+</div>
+</section>
+
+<section id="phonics" class="screen">
+<div class="lesson-head"><button class="back" data-go="home">← Home</button><h2>Phonics Forest</h2><div></div></div>
+<div class="card"><h3>Choose a sound to learn</h3><p class="small">For beginners, start with s, a, t, p, i, n rather than alphabetical order.</p><div class="letter-grid" id="letterGrid"></div></div>
+</section>
+
+<section id="phonicsLesson" class="screen">
+<div class="lesson-head"><button class="back" data-go="phonics">← Sounds</button><div class="pill">Step <span id="lessonStep">1</span> of 3</div><div></div></div>
+<div class="lesson-card">
+<div class="stage" id="stageText">Listen</div><div class="big-letter" id="bigLetter">S</div><div class="sound-line" id="soundSymbol">/s/</div>
+<div class="picture" id="picture">☀️</div><div class="word" id="word">sun</div><div class="instruction" id="lessonInstruction">Tap the speaker, listen to the sound, then say it aloud.</div>
+<div class="action-row"><button class="action" id="playSound">🔊 Hear the sound</button><button class="action green" id="playWord">🗣️ Hear the word</button><button class="primary" id="lessonNext">I said it!</button></div>
+</div>
+</section>
+
+<section id="practice" class="screen">
+<div class="lesson-head"><button class="back" data-go="home">← Home</button><h2>Sound Challenge</h2><div class="pill"><span id="quizCount">1</span>/8</div></div>
+<div class="lesson-card"><div class="stage">Listen carefully</div><div class="instruction" id="question">Which letter makes this sound?</div><button class="action" id="replay">🔊 Play sound</button><div class="choices" id="choices"></div><div class="feedback" id="feedback"></div><button class="primary hidden" id="quizNext">Next</button></div>
+</section>
+
+<section id="maths" class="screen">
+<div class="lesson-head"><button class="back" data-go="home">← Home</button><h2>Maths Mountain</h2><div class="pill"><span id="mathCount">1</span>/10</div></div>
+<div class="lesson-card"><div class="stage" id="mathStage">Number challenge</div><div class="instruction" id="mathQuestion"></div><div class="choices" id="mathChoices"></div><div class="feedback" id="mathFeedback"></div><button class="primary hidden" id="mathNext">Next</button></div>
+</section>
+
+<section id="rewards" class="screen">
+<div class="lesson-head"><button class="back" data-go="home">← Home</button><h2>Treasure Room</h2><div></div></div>
+<div class="badges" id="badgesGrid"></div>
+</section>
+
+<section id="parents" class="screen">
+<div class="lesson-head"><button class="back" data-go="home">← Home</button><h2>Parent Dashboard</h2><div></div></div>
+<div class="parent-grid">
+<div class="card"><div class="small">Sounds explored</div><div class="metric"><span id="soundsExplored">0</span>/26</div></div>
+<div class="card"><div class="small">Correct answers</div><div class="metric" id="correctAnswers">0</div></div>
+<div class="card"><div class="small">Maths sessions</div><div class="metric" id="mathSessions">0</div></div>
+<div class="card"><div class="small">Total stars</div><div class="metric" id="parentStars">0</div></div>
+</div>
+<div class="card" style="margin-top:16px"><h3>Important audio note</h3><p class="small">Pure phonics sounds use dedicated audio clips. Spoken instructions and words use the iPad's British English voice where available.</p><button class="back" id="resetProgress">Reset progress</button></div>
+</section>
+</div>
+
+<nav class="nav">
+<button class="active" data-go="home">🏠<br>Home</button><button data-go="phonics">🔤<br>Phonics</button><button data-go="rewards">🎁<br>Rewards</button><button data-go="parents">👨‍👩‍👧<br>Parents</button>
+</nav>
+
+<script>
+const DATA=[{"letter": "A", "key": "a", "symbol": "/a/", "word": "apple", "emoji": "\ud83c\udf4e"}, {"letter": "B", "key": "b", "symbol": "/b/", "word": "ball", "emoji": "\u26bd"}, {"letter": "C", "key": "c", "symbol": "/k/", "word": "cat", "emoji": "\ud83d\udc31"}, {"letter": "D", "key": "d", "symbol": "/d/", "word": "dog", "emoji": "\ud83d\udc36"}, {"letter": "E", "key": "e", "symbol": "/E/", "word": "egg", "emoji": "\ud83e\udd5a"}, {"letter": "F", "key": "f", "symbol": "/f/", "word": "fish", "emoji": "\ud83d\udc1f"}, {"letter": "G", "key": "g", "symbol": "/g/", "word": "goat", "emoji": "\ud83d\udc10"}, {"letter": "H", "key": "h", "symbol": "/h/", "word": "hat", "emoji": "\ud83c\udfa9"}, {"letter": "I", "key": "i", "symbol": "/I/", "word": "igloo", "emoji": "\ud83c\udfe0"}, {"letter": "J", "key": "j", "symbol": "/dZ/", "word": "jam", "emoji": "\ud83c\udf53"}, {"letter": "K", "key": "k", "symbol": "/k/", "word": "kite", "emoji": "\ud83e\ude81"}, {"letter": "L", "key": "l", "symbol": "/l/", "word": "lion", "emoji": "\ud83e\udd81"}, {"letter": "M", "key": "m", "symbol": "/m/", "word": "moon", "emoji": "\ud83c\udf19"}, {"letter": "N", "key": "n", "symbol": "/n/", "word": "nest", "emoji": "\ud83e\udeba"}, {"letter": "O", "key": "o", "symbol": "/Q/", "word": "orange", "emoji": "\ud83c\udf4a"}, {"letter": "P", "key": "p", "symbol": "/p/", "word": "pig", "emoji": "\ud83d\udc37"}, {"letter": "Q", "key": "q", "symbol": "/kw/", "word": "queen", "emoji": "\ud83d\udc51"}, {"letter": "R", "key": "r", "symbol": "/r/", "word": "rabbit", "emoji": "\ud83d\udc30"}, {"letter": "S", "key": "s", "symbol": "/s/", "word": "sun", "emoji": "\u2600\ufe0f"}, {"letter": "T", "key": "t", "symbol": "/t/", "word": "tiger", "emoji": "\ud83d\udc2f"}, {"letter": "U", "key": "u", "symbol": "/V/", "word": "umbrella", "emoji": "\u2602\ufe0f"}, {"letter": "V", "key": "v", "symbol": "/v/", "word": "van", "emoji": "\ud83d\ude90"}, {"letter": "W", "key": "w", "symbol": "/w/", "word": "web", "emoji": "\ud83d\udd78\ufe0f"}, {"letter": "X", "key": "x", "symbol": "/ks/", "word": "box", "emoji": "\ud83d\udce6"}, {"letter": "Y", "key": "y", "symbol": "/j/", "word": "yellow", "emoji": "\ud83d\udfe1"}, {"letter": "Z", "key": "z", "symbol": "/z/", "word": "zebra", "emoji": "\ud83e\udd93"}];
+const ORDER=['s','a','t','p','i','n','m','d','g','o','c','k','e','u','r','h','b','f','l','j','v','w','x','y','z','q'];
+let state=JSON.parse(localStorage.getItem('brightsteps')||'{}');
+state.learned=state.learned||[];state.stars=state.stars||0;state.correct=state.correct||0;state.mathSessions=state.mathSessions||0;state.streak=state.streak||1;
+let current=null,step=1,quiz=[],qpos=0,mathQuiz=[],mpos=0;
+const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
+function save(){localStorage.setItem('brightsteps',JSON.stringify(state));update();}
+function update(){$('#stars').textContent=state.stars;$('#streak').textContent=state.streak;$('#phonicsBar').style.width=(state.learned.length/26*100)+'%';$('#rewardBar').style.width=Math.min(100,state.stars)+'%';$('#soundsExplored').textContent=state.learned.length;$('#correctAnswers').textContent=state.correct;$('#mathSessions').textContent=state.mathSessions;$('#parentStars').textContent=state.stars;}
+function go(id){$$('.screen').forEach(x=>x.classList.remove('active'));$('#'+id).classList.add('active');$$('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.go===id));if(id==='phonics')renderLetters();if(id==='rewards')renderBadges();if(id==='parents')update();}
+$$('[data-go]').forEach(x=>x.onclick=()=>go(x.dataset.go));
+function speak(text){if(!('speechSynthesis'in window))return; speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-GB';u.rate=.82;const v=speechSynthesis.getVoices().find(v=>v.lang==='en-GB');if(v)u.voice=v;speechSynthesis.speak(u);}
+function audio(file){const a=new Audio(file);a.play().catch(()=>{});}
+function item(key){return DATA.find(x=>x.key===key);}
+function renderLetters(){const g=$('#letterGrid');g.innerHTML='';ORDER.forEach(k=>{const d=item(k),b=document.createElement('button');b.className='letter'+(state.learned.includes(k)?' learned':'');b.textContent=d.letter;b.onclick=()=>openLesson(k);g.appendChild(b);});}
+function openLesson(k){current=item(k);step=1;if(!state.learned.includes(k)){state.learned.push(k);save();}go('phonicsLesson');renderLesson();}
+function renderLesson(){$('#lessonStep').textContent=step;$('#bigLetter').textContent=current.letter;$('#soundSymbol').textContent=current.symbol;$('#picture').textContent=current.emoji;$('#word').textContent=current.word;
+if(step===1){$('#stageText').textContent='1. Listen';$('#lessonInstruction').textContent='Tap the speaker and listen to the pure sound.';$('#lessonNext').textContent='Next: Repeat';}
+if(step===2){$('#stageText').textContent='2. Repeat';$('#lessonInstruction').textContent='Listen again. Then say the sound yourself without adding “uh”.';$('#lessonNext').textContent='Next: Connect';}
+if(step===3){$('#stageText').textContent='3. Connect';$('#lessonInstruction').textContent=current.word+' begins with this sound. Listen to the word and say it.';$('#lessonNext').textContent='Earn a star';}}
+$('#playSound').onclick=()=>audio('audio/sound_'+current.key+'.wav');$('#playWord').onclick=()=>audio('audio/word_'+current.key+'.wav');
+$('#lessonNext').onclick=()=>{if(step<3){step++;renderLesson();audio('audio/sound_'+current.key+'.wav');}else{state.stars++;save();speak('Wonderful learning');go('phonics');}};
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function startPractice(){const pool=state.learned.length>=3?state.learned:ORDER.slice(0,6);quiz=shuffle(pool).slice(0,8);qpos=0;go('practice');showQ();}
+function showQ(){const k=quiz[qpos],correct=item(k);$('#quizCount').textContent=qpos+1;$('#feedback').textContent='';$('#quizNext').classList.add('hidden');$('#question').textContent='Which letter makes this sound?';const opts=shuffle([correct,...shuffle(DATA.filter(x=>x.key!==k)).slice(0,2)]);const c=$('#choices');c.innerHTML='';opts.forEach(o=>{const b=document.createElement('button');b.className='choice';b.textContent=o.letter;b.onclick=()=>{if(o.key===k){b.classList.add('correct');$('#feedback').textContent='Brilliant!';state.stars++;state.correct++;save();$('#quizNext').classList.remove('hidden');}else{b.classList.add('wrong');$('#feedback').textContent='Listen once more.';setTimeout(()=>b.classList.remove('wrong'),600);}};c.appendChild(b);});setTimeout(()=>audio('audio/sound_'+k+'.wav'),250);$('#replay').onclick=()=>audio('audio/sound_'+k+'.wav');}
+$('#quizNext').onclick=()=>{qpos++;if(qpos>=quiz.length){speak('Challenge complete');go('home');}else showQ();};
+function makeMath(){const arr=[];for(let i=0;i<10;i++){const type=i%4;let q,a;if(type===0){let x=3+Math.floor(Math.random()*8),y=1+Math.floor(Math.random()*5);q=`${x} + ${y} = ?`;a=x+y;}else if(type===1){let x=7+Math.floor(Math.random()*9),y=1+Math.floor(Math.random()*6);if(y>x)y=2;q=`${x} − ${y} = ?`;a=x-y;}else if(type===2){let x=2+Math.floor(Math.random()*8);q=`What comes after ${x}?`;a=x+1;}else{let x=2+Math.floor(Math.random()*5);q=`What is double ${x}?`;a=x*2;}arr.push({q,a});}return arr;}
+function startMath(){mathQuiz=makeMath();mpos=0;go('maths');showMath();}
+function showMath(){const m=mathQuiz[mpos];$('#mathCount').textContent=mpos+1;$('#mathQuestion').textContent=m.q;$('#mathFeedback').textContent='';$('#mathNext').classList.add('hidden');let opts=shuffle([m.a,m.a+1,Math.max(0,m.a-1)]);const c=$('#mathChoices');c.innerHTML='';opts.forEach(v=>{const b=document.createElement('button');b.className='choice';b.textContent=v;b.onclick=()=>{if(v===m.a){b.classList.add('correct');$('#mathFeedback').textContent='Excellent!';state.stars++;state.correct++;save();$('#mathNext').classList.remove('hidden');}else{b.classList.add('wrong');$('#mathFeedback').textContent='Try another answer.';setTimeout(()=>b.classList.remove('wrong'),600);}};c.appendChild(b);});}
+$('#mathNext').onclick=()=>{mpos++;if(mpos>=mathQuiz.length){state.mathSessions++;save();speak('Maths session complete');go('home');}else showMath();};
+$('#dailyStart').onclick=()=>{startPractice();};document.querySelector('[data-go="maths"].path-card').onclick=startMath;document.querySelector('[data-go="phonics"].path-card').onclick=()=>go('phonics');document.querySelector('[data-go="rewards"].path-card').onclick=()=>go('rewards');
+function renderBadges(){const defs=[['🌱','First Sound',1],['🦋','Six Sounds',6],['🌈','Halfway Hero',13],['🏆','A–Z Champion',26],['⭐','Ten Stars',10,'star'],['👑','Fifty Stars',50,'star'],['🧠','20 Correct',20,'correct'],['🔢','Maths Explorer',3,'math']];const g=$('#badgesGrid');g.innerHTML='';defs.forEach(d=>{let ok=d[3]==='star'?state.stars>=d[2]:d[3]==='correct'?state.correct>=d[2]:d[3]==='math'?state.mathSessions>=d[2]:state.learned.length>=d[2];const x=document.createElement('div');x.className='badge'+(ok?' unlocked':'');x.innerHTML=`<div class="bicon">${d[0]}</div><h3>${d[1]}</h3><div class="small">${ok?'Unlocked':'Keep learning'}</div>`;g.appendChild(x);});}
+$('#resetProgress').onclick=()=>{if(confirm('Reset all learning progress?')){localStorage.removeItem('brightsteps');location.reload();}};
+update();if('serviceWorker'in navigator)navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+</script>
+</body></html>

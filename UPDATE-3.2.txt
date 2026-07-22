@@ -1,0 +1,20 @@
+BrightSteps 3.2 update
+========================
+
+Story House rewrite:
+- Nine connected, child-understandable stories.
+- Spoken Owl introduction before each book.
+- Heart words taught before reading.
+- Tap the page picture to hear the whole sentence.
+- Tap any individual word to hear that word.
+- New picture scene on every page.
+- First-read and rereading progress retained on this device.
+
+Retained from 3.1:
+- Letter and word direct-tap phonics interactions.
+- 20-minute active learning limit.
+- Five-minute compulsory eye break and ten-minute recommendation.
+- Existing progress and garden migration.
+
+Upload the files in this patch over the same files in the repository root.
+Keep the existing GitHub workflow and audio process.

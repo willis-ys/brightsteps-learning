@@ -1,17 +1,22 @@
-# BrightSteps 3.0
+# BrightSteps 3.2
 
-BrightSteps 3.0 is a complete rewrite for iPad and GitHub Pages.
+BrightSteps 3.2 is an iPad-friendly, offline-capable early-learning app for GitHub Pages.
 
-## Main changes
+## Changes in 3.2
 
-- Every phonics example includes a whole-word pronunciation button.
-- Blending plays the individual phonemes and then reads the complete word.
-- The same device read-aloud voice is used for words, stories and maths.
-- Maths includes 10-question and 30-question sessions with automatic read-aloud.
-- My Garden keeps every completed plant permanently and includes animals to unlock and feed.
-- Stars are the only spendable reward. There is no daily gift or gem currency.
-- Story House provides short read-together stories as phonics trails are completed.
-- Existing BrightSteps 2.x progress is migrated automatically.
+- Story House has been rewritten around short, connected events that a five-year-old can follow.
+- Each story now has:
+  - a spoken Owl introduction that explains the situation;
+  - one character or situation carried through every page;
+  - page-specific picture scenes;
+  - tappable individual words;
+  - a tappable picture that reads the complete sentence;
+  - clearly marked heart words introduced before reading.
+- The first read earns two stars; rereading earns one star and supports fluency.
+- Completed stories are marked on the Story House shelf.
+- Phonics interactions remain content-led: tap letters for sounds and words or pictures for whole-word pronunciation.
+- The healthy screen-time cycle remains enabled: 20 minutes of active use, then a five-minute minimum eye break, with ten minutes recommended.
+- Existing BrightSteps progress, stars, garden items, phonics progress and screen-time state are retained.
 
 ## Update an existing GitHub repository
 
@@ -24,6 +29,6 @@ Replace these files in the repository root:
 - `manifest.webmanifest`
 - `README.md`
 
-Keep your existing `.github/workflows/deploy-pages.yml`. It will continue placing the local phonics files into `audio/phonemes/` during deployment.
+Keep the existing `.github/workflows/deploy-pages.yml`. It will continue placing the local phonics files in `audio/phonemes/` during deployment.
 
-Do not clear Safari website data unless necessary, because progress is stored locally in the browser. After deployment, refresh Safari twice and reopen the Home Screen app.
+Do not clear Safari website data unless necessary because progress is stored locally. After GitHub Pages deploys, refresh Safari twice and reopen the Home Screen app.

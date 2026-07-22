@@ -1,7 +1,7 @@
 {
-  "name": "BrightSteps Learning Adventure 3.0",
+  "name": "BrightSteps Learning Adventure 3.2",
   "short_name": "BrightSteps",
-  "description": "A playful phonics, maths, story and garden learning app for early learners.",
+  "description": "A playful phonics, maths, meaningful story and garden learning app for early learners.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -9,7 +9,15 @@
   "theme_color": "#7158e8",
   "orientation": "any",
   "icons": [
-    {"src":"./icons/icon-192.png","sizes":"192x192","type":"image/png"},
-    {"src":"./icons/icon-512.png","sizes":"512x512","type":"image/png"}
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }

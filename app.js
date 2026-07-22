@@ -1,6 +1,9 @@
 "use strict";
 
-const APP_VERSION = "3.0.0";
+const APP_VERSION = "3.2.0";
+const LEARNING_SESSION_SECONDS = 20 * 60;
+const MIN_BREAK_SECONDS = 5 * 60;
+const RECOMMENDED_BREAK_SECONDS = 10 * 60;
 const STORAGE_KEY = "brightsteps-2-progress";
 const PHONEME_BASE = "./audio/phonemes/";
 const SOUND_FILE_MAP = { k: "c", ck: "c", ff: "f", ll: "l", ss: "s", zz: "z", "oo-long": "ooo" };
@@ -46,12 +49,109 @@ const WORDS = [
 ];
 
 const STORIES = [
-  {title:"Tap, Tap, Tap",emoji:"🚰",unlock:0,lines:["Pat sat.","Tap, tap, tap.","Pat sat and tapped."]},
-  {title:"Sam and Dad",emoji:"👨‍👧",unlock:1,lines:["Sam sat.","Dad sat.","Sam and Dad sat."]},
-  {title:"The Cat and Dog",emoji:"🐈",unlock:2,lines:["A cat sat on a cot.","A dog got a hat.","The cat and dog sat."]},
-  {title:"The Red Duck",emoji:"🦆",unlock:3,lines:["The red duck can run.","The sun is up.","Run, duck, run!"]},
-  {title:"The Fox in a Box",emoji:"🦊",unlock:5,lines:["The fox is in a box.","The van can zip.","Yes! The fox can win."]},
-  {title:"The Ship Shop",emoji:"🚢",unlock:6,lines:["The ship is at the shop.","The ring is thin.","Chip can chat."]}
+  {
+    id:"pat-taps",title:"Pat Makes a Beat",emoji:"🥁",unlock:0,
+    intro:"Pat finds a drum and makes a beat.",tricky:[],
+    pages:[
+      {text:"Pat sat.",art:"🧒🪑"},
+      {text:"Pat taps.",art:"🧒🥁"},
+      {text:"Tap, tap, tap!",art:"🥁🎵✨"}
+    ]
+  },
+  {
+    id:"sam-joins-in",title:"Sam Joins In",emoji:"👨‍👧🥁",unlock:1,
+    intro:"Dad is tapping a drum. Sam wants to join him.",tricky:[],
+    pages:[
+      {text:"Dad taps.",art:"🧔🥁"},
+      {text:"Sam taps.",art:"🧒🥁"},
+      {text:"Dad and Sam tap.",art:"🧔🧒🥁"},
+      {text:"Tap, tap, tap!",art:"🥁🎵🎵"}
+    ]
+  },
+  {
+    id:"dog-cat-nap",title:"Dog and Cat Nap",emoji:"🐶🐈",unlock:2,
+    intro:"Dog finds a cosy cot. Cat wants to share it.",
+    tricky:[{word:"a",spoken:"uh"}],
+    pages:[
+      {text:"Dog sat on a cot.",art:"🐶🛏️"},
+      {text:"Cat got on.",art:"🐈➡️🛏️"},
+      {text:"Dog and cat sat.",art:"🐶🐈🛏️"},
+      {text:"Dog and cat nap.",art:"🐶🐈💤"}
+    ]
+  },
+  {
+    id:"muddy-duck",title:"Muddy Duck",emoji:"🦆",unlock:4,
+    intro:"A red duck runs into the mud. Mum helps to clean it.",
+    tricky:[{word:"a",spoken:"uh"},{word:"the",spoken:"the"},{word:"is",spoken:"is"}],
+    pages:[
+      {text:"A red duck ran.",art:"🦆🏃"},
+      {text:"The duck fell in mud.",art:"🦆🟤💦"},
+      {text:"Mum had a red rag.",art:"👩🟥"},
+      {text:"Mum rubs the duck.",art:"👩🧽🦆"},
+      {text:"The duck is red!",art:"🦆✨"}
+    ]
+  },
+  {
+    id:"max-box",title:"Max and the Box",emoji:"🚐📦",unlock:5,
+    intro:"Max is helping Mum take a box in the van.",
+    tricky:[{word:"the",spoken:"the"},{word:"was",spoken:"was"}],
+    pages:[
+      {text:"Max had a box.",art:"🧒📦"},
+      {text:"The box was in a van.",art:"🚐📦"},
+      {text:"The van went up a hill.",art:"🚐⛰️"},
+      {text:"The box fell.",art:"📦⬇️"},
+      {text:"Max got the box.",art:"🧒📦✨"}
+    ]
+  },
+  {
+    id:"ant-bun",title:"The Ant on the Bun",emoji:"🐜🍞",unlock:6,
+    intro:"Chip and Beth have a snack on a rug. An ant wants some too.",
+    tricky:[{word:"a",spoken:"uh"},{word:"the",spoken:"the"}],
+    pages:[
+      {text:"Chip and Beth sat on a rug.",art:"🧒👧🧺"},
+      {text:"Chip had a bun.",art:"🧒🍞"},
+      {text:"A big ant got on the bun.",art:"🐜🍞"},
+      {text:"Beth lifts the bun.",art:"👧⬆️🍞"},
+      {text:"The ant fell off.",art:"🐜⬇️"},
+      {text:"The ant ran off.",art:"🐜🏃"}
+    ]
+  },
+  {
+    id:"goat-boat",title:"Goat in the Boat",emoji:"🐐🛶",unlock:7,
+    intro:"Tom and Mum are in a boat. A goat wants to come too.",
+    tricky:[{word:"a",spoken:"uh"},{word:"the",spoken:"the"},{word:"to",spoken:"to"}],
+    pages:[
+      {text:"Tom and Mum sit in a boat.",art:"👩🧒🛶"},
+      {text:"A goat runs to the boat.",art:"🐐🏃🛶"},
+      {text:"The goat gets in.",art:"🐐🛶"},
+      {text:"The boat tips.",art:"🛶↘️"},
+      {text:"Tom and Mum get wet!",art:"👩🧒💦"}
+    ]
+  },
+  {
+    id:"lost-book",title:"The Lost Book",emoji:"📖🌙",unlock:8,
+    intro:"Tom drops his book outside at night. Mum helps him find it.",
+    tricky:[{word:"the",spoken:"the"}],
+    pages:[
+      {text:"Tom had a book.",art:"🧒📖"},
+      {text:"The book fell in the dark.",art:"📖🌙"},
+      {text:"Mum and Tom look.",art:"👩🧒🔎"},
+      {text:"A bird sat on the book.",art:"🐦📖"},
+      {text:"Tom got the book.",art:"🧒📖✨"}
+    ]
+  },
+  {
+    id:"lost-chick",title:"The Chick Comes Back",emoji:"🐔🐥",unlock:9,
+    intro:"A little chick is hiding in the shed. Mum Hen is looking for it.",
+    tricky:[{word:"the",spoken:"the"},{word:"is",spoken:"is"},{word:"says",spoken:"says"}],
+    pages:[
+      {text:"The chick is in the shed.",art:"🐥🏚️"},
+      {text:"Mum Hen cannot spot it.",art:"🐔🔎"},
+      {text:"Cluck, cluck! says Mum Hen.",art:"🐔💬"},
+      {text:"The chick runs back.",art:"🐥🏃"},
+      {text:"Mum Hen hugs the chick.",art:"🐔🐥❤️"}
+    ]
+  }
 ];
 
 const PLANTS = {
@@ -81,9 +181,10 @@ const BADGES = [
 function defaultState(){
   return {
     name:"Explorer",stars:0,streak:0,lastPlay:null,phonics:{},completedTrails:[],unlockedTrail:0,
-    mathLevel:1,badges:[],settings:{readAloud:true,voiceName:""},
+    mathLevel:1,badges:[],completedStories:[],settings:{readAloud:true,voiceName:""},
+    session:{activeSeconds:0,breakStartedAt:0,breakUntil:0,recommendedUntil:0},
     garden:{activePlant:{type:"daisy",stage:0},plants:[],animals:[{type:"robin",happiness:0}],selectedAnimal:"robin"},
-    stats:{phonicsCorrect:0,phonicsAttempts:0,wordsBlended:0,mathCorrect:0,mathAttempts:0,mathSessions:0,starsEarned:0,starsSpent:0,waterings:0,feedings:0,storiesRead:0},
+    stats:{phonicsCorrect:0,phonicsAttempts:0,wordsBlended:0,mathCorrect:0,mathAttempts:0,mathSessions:0,starsEarned:0,starsSpent:0,waterings:0,feedings:0,storiesRead:0,eyeBreaks:0},
     mathDomains:{counting:{c:0,a:0},addition:{c:0,a:0},subtraction:{c:0,a:0},bonds:{c:0,a:0},order:{c:0,a:0},patterns:{c:0,a:0},compare:{c:0,a:0},shapes:{c:0,a:0},measure:{c:0,a:0},stories:{c:0,a:0}}
   };
 }
@@ -92,6 +193,9 @@ let state = loadState();
 let current = {view:"home",trail:0,lesson:null,math:null,story:null};
 let activeAudio = null;
 let preferredVoice = null;
+let sessionTimer = null;
+let lastSessionTick = Date.now();
+let lastSessionSavedSecond = -1;
 migrateState();
 
 function loadState(){
@@ -110,10 +214,12 @@ function migrateState(){
   if(typeof state.settings.mathsSpeech==="boolean"&&typeof state.settings.readAloud!=="boolean") state.settings.readAloud=state.settings.mathsSpeech;
   if(typeof state.settings.readAloud!=="boolean") state.settings.readAloud=true;
   state.stats=merge(defaultState().stats,state.stats||{});
+  state.session=merge(defaultState().session,state.session||{});
   state.mathDomains=merge(defaultState().mathDomains,state.mathDomains||{});
   state.completedTrails=Array.isArray(state.completedTrails)?state.completedTrails:[];
   state.phonics=state.phonics||{};
   state.badges=Array.isArray(state.badges)?state.badges:[];
+  state.completedStories=Array.isArray(state.completedStories)?state.completedStories:[];
 
   const oldGarden=state.garden||{};
   if(!Array.isArray(oldGarden.plants)){
@@ -165,7 +271,12 @@ function awardBadges(){
 }
 
 const app=()=>document.getElementById("app");
-function shell(html){app().innerHTML=html;bind();}
+function shell(html){
+  if(isBreakLocked()&&current.view!=="break")return renderBreak();
+  app().innerHTML=html;
+  bind();
+  updateSessionIndicators();
+}
 function esc(value){return String(value).replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));}
 function shuffle(items){const copy=[...items];for(let i=copy.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[copy[i],copy[j]]=[copy[j],copy[i]];}return copy;}
 function pick(items){return items[Math.floor(Math.random()*items.length)];}
@@ -173,8 +284,80 @@ function clamp(n,min,max){return Math.max(min,Math.min(max,n));}
 function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
 function toast(message){const el=document.getElementById("toast");el.textContent=message;el.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.classList.remove("show"),2600);}
 function progressBar(value,label=""){return `<div class="progress-wrap" aria-label="${esc(label)}"><div class="progress-track"><span style="width:${clamp(value,0,100)}%"></span></div>${label?`<small>${esc(label)}</small>`:""}</div>`;}
-function topBar(){return `<header class="topbar"><button class="brand" data-action="home" aria-label="Home"><span class="brand-mark">🌟</span><span>BrightSteps</span></button><div class="status-row"><span class="status-pill" title="Learning streak">🔥 <b>${state.streak}</b></span><span class="status-pill" title="Stars available">⭐ <b>${state.stars}</b></span></div></header>`;}
-function screenHeader(title,subtitle,back="home"){return `<div class="screen-head"><button class="round-button" data-action="${back}" aria-label="Back">←</button><div><h1>${esc(title)}</h1><p>${esc(subtitle)}</p></div><span class="mini-stars">⭐ ${state.stars}</span></div>`;}
+function formatClock(totalSeconds){const seconds=Math.max(0,Math.ceil(Number(totalSeconds)||0));return `${Math.floor(seconds/60)}:${String(seconds%60).padStart(2,"0")}`;}
+function sessionSecondsRemaining(){return Math.max(0,LEARNING_SESSION_SECONDS-(Number(state.session?.activeSeconds)||0));}
+function sessionMinutesLabel(){return `${Math.max(1,Math.ceil(sessionSecondsRemaining()/60))} min`;}
+function sessionBadge(){return `<span class="session-pill" title="Learning time before an eye break" aria-label="${sessionMinutesLabel()} of learning time remaining"><span>🌿</span><b data-session-label>${sessionMinutesLabel()}</b></span>`;}
+function isBreakLocked(){return Number(state.session?.breakUntil||0)>Date.now();}
+function clearBreakState(){state.session.activeSeconds=0;state.session.breakStartedAt=0;state.session.breakUntil=0;state.session.recommendedUntil=0;lastSessionTick=Date.now();saveRaw();}
+function beginEyeBreak(){
+  if(isBreakLocked())return renderBreak();
+  stopAudio();stopSpeech();
+  const now=Date.now();
+  state.session.activeSeconds=0;
+  state.session.breakStartedAt=now;
+  state.session.breakUntil=now+MIN_BREAK_SECONDS*1000;
+  state.session.recommendedUntil=now+RECOMMENDED_BREAK_SECONDS*1000;
+  state.stats.eyeBreaks=(Number(state.stats.eyeBreaks)||0)+1;
+  saveRaw();
+  renderBreak();
+}
+function continueAfterBreak(){
+  if(isBreakLocked())return renderBreak();
+  clearBreakState();
+  renderHome();
+}
+function renderBreak(){
+  current.view="break";
+  stopAudio();stopSpeech();
+  const now=Date.now();
+  const minimum=Math.max(0,Math.ceil((Number(state.session.breakUntil||0)-now)/1000));
+  const recommended=Math.max(0,Math.ceil((Number(state.session.recommendedUntil||0)-now)/1000));
+  shell(`<div class="screen break-screen">
+    <section class="break-card">
+      <div class="break-art" aria-hidden="true">🦉🌿</div>
+      <span class="break-kicker">20-minute adventure complete</span>
+      <h1>Time for an eye break</h1>
+      <p class="break-lead">Put the iPad down, stretch your body and look at something far away.</p>
+      <div class="break-clock" id="breakClock" aria-live="polite">${minimum>0?formatClock(minimum):"Ready"}</div>
+      <div class="break-ideas"><span>🪟 Look outside</span><span>🙆 Stretch</span><span>💧 Have a drink</span></div>
+      <button id="continueAfterBreak" class="cta green wide" data-action="continue-after-break" ${minimum>0?"disabled":""}>${minimum>0?`Rest for ${formatClock(minimum)}`:"Continue learning"}</button>
+      <p id="breakAdvice" class="break-advice">${minimum>0?"A five-minute break is required. Ten minutes is even better.":recommended>0?`You may continue now, or rest for ${formatClock(recommended)} more.`:"Great rest — you are ready for a new adventure."}</p>
+    </section>
+  </div>`);
+  updateBreakView();
+}
+function updateBreakView(){
+  if(current.view!=="break")return;
+  const now=Date.now();
+  const minimum=Math.max(0,Math.ceil((Number(state.session.breakUntil||0)-now)/1000));
+  const recommended=Math.max(0,Math.ceil((Number(state.session.recommendedUntil||0)-now)/1000));
+  const clock=document.getElementById("breakClock"),button=document.getElementById("continueAfterBreak"),advice=document.getElementById("breakAdvice");
+  if(clock)clock.textContent=minimum>0?formatClock(minimum):recommended>0?"5:00 ✓":"10:00 ✓";
+  if(button){button.disabled=minimum>0;button.textContent=minimum>0?`Rest for ${formatClock(minimum)}`:recommended>0?"Continue learning":"Break complete — continue";}
+  if(advice)advice.textContent=minimum>0?"A five-minute break is required. Ten minutes is even better.":recommended>0?`You may continue now, or rest for ${formatClock(recommended)} more.`:"Great rest — you are ready for a new adventure.";
+}
+function updateSessionIndicators(){document.querySelectorAll("[data-session-label]").forEach(el=>el.textContent=sessionMinutesLabel());if(current.view==="break")updateBreakView();}
+function sessionHeartbeat(){
+  const now=Date.now();
+  if(current.view==="break"||isBreakLocked()){
+    if(current.view!=="break")renderBreak();else updateBreakView();
+    lastSessionTick=now;
+    return;
+  }
+  const countTime=document.visibilityState==="visible"&&current.view!=="parent";
+  if(countTime){
+    const elapsed=Math.max(0,Math.min(5,(now-lastSessionTick)/1000));
+    state.session.activeSeconds=Math.min(LEARNING_SESSION_SECONDS,(Number(state.session.activeSeconds)||0)+elapsed);
+    const whole=Math.floor(state.session.activeSeconds);
+    if(whole!==lastSessionSavedSecond&&whole%15===0){lastSessionSavedSecond=whole;saveRaw();}
+    if(state.session.activeSeconds>=LEARNING_SESSION_SECONDS){beginEyeBreak();lastSessionTick=now;return;}
+    updateSessionIndicators();
+  }
+  lastSessionTick=now;
+}
+function topBar(){return `<header class="topbar"><button class="brand" data-action="home" aria-label="Home"><span class="brand-mark">🌟</span><span>BrightSteps</span></button><div class="status-row">${sessionBadge()}<span class="status-pill" title="Learning streak">🔥 <b>${state.streak}</b></span><span class="status-pill" title="Stars available">⭐ <b>${state.stars}</b></span></div></header>`;}
+function screenHeader(title,subtitle,back="home"){return `<div class="screen-head"><button class="round-button" data-action="${back}" aria-label="Back">←</button><div><h1>${esc(title)}</h1><p>${esc(subtitle)}</p></div><div class="screen-head-status">${sessionBadge()}<span class="mini-stars">⭐ ${state.stars}</span></div></div>`;}
 function bottomNav(active="home"){return `<nav class="bottom-nav" aria-label="Main navigation"><button data-action="home" class="${active==="home"?"active":""}"><span>🏠</span>Home</button><button data-action="phonics" class="${active==="phonics"?"active":""}"><span>🌳</span>Phonics</button><button data-action="maths-menu" class="${active==="maths"?"active":""}"><span>⛰️</span>Maths</button><button data-action="garden" class="${active==="garden"?"active":""}"><span>🌼</span>Garden</button></nav>`;}
 
 function phonicsProgress(){return Math.round(state.completedTrails.length/TRAILS.length*100);}
@@ -245,35 +428,36 @@ function renderLesson(){
 }
 function renderSoundIntro(sound){
   const meta=SOUND_META[sound];
-  return `<div class="guide-row"><span class="guide-avatar">🦉</span><div class="speech-bubble">Meet a new sound</div></div>
-    <div class="sound-hero"><div class="grapheme">${esc(sound)}</div><button class="word-picture" data-speak="${esc(meta.word)}" aria-label="Hear ${esc(meta.word)}"><span>${meta.emoji}</span><strong>${esc(meta.word)}</strong><small>Tap to hear the word</small></button></div>
-    <div class="dual-actions"><button class="cta purple" data-play-sound="${esc(sound)}" data-repeat="2">🔊 Hear sound twice</button><button class="cta soft" data-speak="${esc(meta.word)}">▶ Hear “${esc(meta.word)}”</button></div>
-    <p class="child-prompt">Listen, say the sound, then say the whole word.</p>
-    <button class="cta green wide" data-action="lesson-next">I’m ready <span>→</span></button>`;
+  return `<div class="guide-row"><span class="guide-avatar">🦉</span><div class="speech-bubble">Tap, listen and say it with me</div></div>
+    <div class="sound-hero">
+      <button class="grapheme tap-audio" data-play-sound="${esc(sound)}" data-repeat="1" aria-label="Hear the ${esc(sound)} sound"><span>${esc(sound)}</span><small>tap the letter</small></button>
+      <button class="word-picture tap-audio" data-speak="${esc(meta.word)}" aria-label="Hear the word ${esc(meta.word)}"><span>${meta.emoji}</span><strong>${esc(meta.word)}</strong><small>tap the picture or word</small></button>
+    </div>
+    <p class="tap-instruction"><span>1</span> Tap the letter for its sound. <span>2</span> Tap the word to hear the whole word.</p>
+    <button class="cta green wide" data-action="lesson-next">Next <span>→</span></button>`;
 }
 function renderSoundChoice(target){
   const pool=shuffle(Object.keys(SOUND_META).filter(s=>s!==target)).slice(0,3);
   const options=shuffle([target,...pool]);
-  return `<div class="guide-row"><span class="guide-avatar">🦊</span><div class="speech-bubble">Which letters make the sound?</div></div>
-    <div class="listen-orb">👂</div><button class="cta purple" data-play-sound="${esc(target)}" data-repeat="2">🔊 Play the sound</button>
+  return `<div class="guide-row"><span class="guide-avatar">🦊</span><div class="speech-bubble">Listen, then tap the matching letters</div></div>
+    <button class="listen-orb tap-audio" data-play-sound="${esc(target)}" data-repeat="2" aria-label="Play the sound"><span>👂</span><small>tap to listen</small></button>
     <div class="choice-grid sound-choice">${options.map(value=>`<button class="choice-button" data-phonics-answer="${esc(value)}" data-correct="${esc(target)}">${esc(value)}</button>`).join("")}</div>
     <div id="feedback" class="feedback" aria-live="assertive"></div>`;
 }
 function renderBlend(word){
-  return `<div class="guide-row"><span class="guide-avatar">🐿️</span><div class="speech-bubble">Sound it out, then hear the whole word</div></div>
-    <div class="meaning-picture">${word.emoji}</div>
-    <div class="blend-chips">${word.tokens.map((token,index)=>`<span data-token-index="${index}">${esc(token)}</span>`).join("<i>+</i>")}</div>
-    <div class="dual-actions"><button class="cta purple" data-blend-word="${esc(word.word)}">🔊 Sound it out</button><button class="cta soft" data-speak="${esc(word.word)}">▶ Hear whole word</button></div>
-    <div id="wordReveal" class="whole-word hidden">${esc(word.word)}</div>
-    <p class="child-prompt">The picture shows <strong>${esc(word.word)}</strong>.</p>
+  return `<div class="guide-row"><span class="guide-avatar">🐿️</span><div class="speech-bubble">Tap each sound, then tap the whole word</div></div>
+    <button class="meaning-picture picture-tap tap-audio" data-speak="${esc(word.word)}" aria-label="Hear ${esc(word.word)}"><span>${word.emoji}</span><small>tap the picture</small></button>
+    <div class="blend-chips">${word.tokens.map((token,index)=>`<button class="sound-chip tap-audio" data-play-sound="${esc(token)}" data-token-index="${index}" aria-label="Hear ${esc(token)}">${esc(token)}</button>`).join("<i>+</i>")}</div>
+    <button id="wordReveal" class="whole-word tap-audio" data-blend-word="${esc(word.word)}" aria-label="Blend and hear ${esc(word.word)}"><strong>${esc(word.word)}</strong><small>tap the word to blend</small></button>
+    <p class="tap-instruction compact">The sounds join together to make <strong>${esc(word.word)}</strong>.</p>
     <div id="feedback" class="feedback" aria-live="assertive"></div>
     <button class="cta green wide hidden" id="blendNext" data-action="blend-next">Next activity <span>→</span></button>`;
 }
 function renderMeaning(word){
   const distractors=shuffle(WORDS.filter(w=>w.word!==word.word&&w.emoji!==word.emoji)).slice(0,2);
   const options=shuffle([word,...distractors]);
-  return `<div class="guide-row"><span class="guide-avatar">🐰</span><div class="speech-bubble">Which picture matches the word?</div></div>
-    <button class="word-listen" data-speak="${esc(word.word)}">🔊 ${esc(word.word)}</button>
+  return `<div class="guide-row"><span class="guide-avatar">🐰</span><div class="speech-bubble">Tap the word, then choose its picture</div></div>
+    <button class="word-listen tap-audio" data-speak="${esc(word.word)}"><strong>${esc(word.word)}</strong><small>tap to hear the word</small></button>
     <div class="picture-grid">${options.map(option=>`<button class="picture-choice" data-meaning-answer="${esc(option.word)}" data-correct="${esc(word.word)}"><span>${option.emoji}</span><small>${esc(option.word)}</small></button>`).join("")}</div>
     <div id="feedback" class="feedback" aria-live="assertive"></div>`;
 }
@@ -324,10 +508,12 @@ async function playBlend(wordName){
       const chip=document.querySelector(`[data-token-index="${i}"]`);chip?.classList.add("active");
       await playOne(audioFile(word.tokens[i]),.9);await wait(170);chip?.classList.remove("active");
     }
-    document.getElementById("wordReveal")?.classList.remove("hidden");
-    await wait(120);speakText(word.word,{rate:.72});
+    const whole=document.getElementById("wordReveal");
+    whole?.classList.add("active");
+    await wait(120);
+    speakText(word.word,{rate:.72,onend:()=>whole?.classList.remove("active")});
     document.getElementById("blendNext")?.classList.remove("hidden");
-    feedback(`Now say the whole word: ${word.word}`,"good");
+    feedback(`That word is ${word.word}. Tap it again whenever you like.`,"good");
   }catch{toast("One of the local sound files is missing.");}
 }
 
@@ -452,21 +638,61 @@ function selectAnimal(type){if(state.garden.animals.some(a=>a.type===type)){stat
 function unlockAnimal(type){const info=ANIMALS[type];if(!info||state.garden.animals.some(a=>a.type===type))return;if(!spendStars(info.cost)){toast("Earn more stars to invite this friend.");return;}state.garden.animals.push({type,happiness:0});state.garden.selectedAnimal=type;save();renderGarden("animal-arrive");toast(`${info.name} joined your garden!`);}
 function feedAnimal(){const animal=state.garden.animals.find(a=>a.type===state.garden.selectedAnimal)||state.garden.animals[0];if(!animal)return;if(!spendStars(GARDEN_COSTS.feed)){toast("You need 2 stars for a snack.");return;}animal.happiness=clamp(animal.happiness+1,0,5);state.stats.feedings++;save();renderGarden("feeding");toast(animal.happiness===5?`${ANIMALS[animal.type].name} is super happy!`:`Yum! ${ANIMALS[animal.type].name} is happier.`);}
 
+function storyUnlocked(story){return state.completedTrails.some(t=>t>=story.unlock);}
+function storyTrickyEntry(story,word){
+  const key=String(word).toLowerCase().replace(/^[^a-z]+|[^a-z]+$/g,"");
+  return (story.tricky||[]).find(item=>item.word.toLowerCase()===key)||null;
+}
+function renderStoryWords(story,text){
+  return String(text).split(/\s+/).map((token,index)=>{
+    const clean=token.toLowerCase().replace(/^[^a-z]+|[^a-z]+$/g,"");
+    const tricky=storyTrickyEntry(story,clean);
+    const spoken=tricky?.spoken||clean||token;
+    return `<button class="story-word-button tap-audio ${tricky?"tricky":""}" data-speak="${esc(spoken)}" aria-label="Hear ${esc(clean||token)}"><span>${esc(token)}</span>${tricky?"<small>♥</small>":""}</button>`;
+  }).join("");
+}
 function renderStories(){
   current.view="stories";
-  const cards=STORIES.map((story,index)=>{const unlocked=state.completedTrails.some(t=>t>=story.unlock);return `<button class="story-card ${unlocked?"":"locked"}" data-story="${index}" ${unlocked?"":"disabled"}><span>${story.emoji}</span><div><small>${unlocked?"Read together":`Finish trail ${story.unlock+1}`}</small><h3>${esc(story.title)}</h3><p>${unlocked?`${story.lines.length} short pages`:"Locked"}</p></div>${unlocked?"<b>→</b>":"<b>🔒</b>"}</button>`;}).join("");
-  shell(`<div class="screen">${screenHeader("Story House","Read together, listen again and point to familiar words.")}
-    <div class="story-house-banner">🏡<div><strong>A quiet place for stories</strong><p>Stories open as phonics paths are completed.</p></div></div><section class="story-list">${cards}</section>${bottomNav("home")}</div>`);
+  const cards=STORIES.map((story,index)=>{
+    const unlocked=storyUnlocked(story),read=state.completedStories.includes(story.id);
+    return `<button class="story-card ${unlocked?"":"locked"}" data-story="${index}" ${unlocked?"":"disabled"}><span>${story.emoji}</span><div><small>${unlocked?(read?"Read again":"New story"):`Finish trail ${story.unlock+1}`}</small><h3>${esc(story.title)}</h3><p>${unlocked?`${story.pages.length} picture pages · ${story.tricky.length} story word${story.tricky.length===1?"":"s"}`:"Locked"}</p></div>${unlocked?`<b>${read?"✓":"→"}</b>`:"<b>🔒</b>"}</button>`;
+  }).join("");
+  shell(`<div class="screen">${screenHeader("Story House","Listen to the introduction, then tap pictures and words as you read.")}
+    <div class="story-house-banner"><span class="story-house-icon">🏡</span><div><strong>Small stories that make sense</strong><p>Each book follows one character and one clear event.</p></div></div><section class="story-list">${cards}</section>${bottomNav("home")}</div>`);
 }
-function openStory(index){current.story={index,page:0};renderStoryPage();}
-function renderStoryPage(){
-  const story=STORIES[current.story.index],page=current.story.page,line=story.lines[page];
-  shell(`<div class="screen story-reader">${screenHeader(story.title,`Page ${page+1} of ${story.lines.length}`,"stories")}
-    <section class="book-page"><div class="book-picture">${story.emoji}</div><p>${esc(line)}</p><button class="cta purple" data-speak="${esc(line)}">🔊 Read this page</button></section>
-    <div class="page-controls"><button class="cta soft" data-action="story-prev" ${page===0?"disabled":""}>← Back</button><button class="cta green" data-action="story-next">${page===story.lines.length-1?"Finish story":"Next page →"}</button></div>
+function openStory(index){current.story={index,page:0,stage:"cover"};renderStoryCover();}
+function renderStoryCover(){
+  const story=STORIES[current.story.index];
+  const words=(story.tricky||[]).map(item=>`<button class="story-word-chip tap-audio" data-speak="${esc(item.spoken||item.word)}"><span>♥</span><strong>${esc(item.word)}</strong><small>tap to hear</small></button>`).join("");
+  shell(`<div class="screen story-reader">${screenHeader(story.title,"Listen first, then read the short pages.","stories")}
+    <section class="story-cover"><div class="story-cover-art" aria-hidden="true">${story.emoji}</div><span class="story-cover-label">Story time</span><h2>${esc(story.title)}</h2>
+      <button class="story-intro tap-audio" data-speak="${esc(story.intro)}"><span>🦉</span><div><small>Tap Owl to hear what happens</small><strong>${esc(story.intro)}</strong></div></button>
+      ${words?`<div class="story-word-preview"><h3>Story words</h3><p>These words have a heart because we learn them by sight and sound.</p><div>${words}</div></div>`:`<div class="story-ready-note">🌱 All the words use sounds already practised on the forest path.</div>`}
+      <button class="cta green wide" data-action="story-start">Open the book <span>→</span></button>
+    </section>
   </div>`);
 }
-function nextStoryPage(){const story=STORIES[current.story.index];if(current.story.page<story.lines.length-1){current.story.page++;renderStoryPage();}else{state.stats.storiesRead++;addStars(2);save();shell(`<div class="screen celebration-screen">${screenHeader("Story finished!","Wonderful listening and reading.","stories")}<section class="celebration-card"><div class="celebration-art">📚✨</div><h2>${esc(story.title)}</h2><p>You reached the end of the story.</p><div class="reward-burst">+2 ⭐</div><button class="cta green wide" data-action="stories">Choose another story</button></section></div>`);}}
+function renderStoryPage(){
+  const story=STORIES[current.story.index],page=current.story.page,item=story.pages[page];
+  const dots=story.pages.map((_,index)=>`<span class="${index===page?"active":index<page?"done":""}"></span>`).join("");
+  shell(`<div class="screen story-reader">${screenHeader(story.title,`Page ${page+1} of ${story.pages.length}`,"story-cover")}
+    <section class="book-page">
+      <button class="book-picture tap-audio" data-story-sentence="${esc(item.text)}" aria-label="Hear the whole sentence"><span>${item.art}</span><small>tap the picture to hear the sentence</small></button>
+      <div class="story-word-line" aria-label="Tap any word to hear it">${renderStoryWords(story,item.text)}</div>
+      <p class="story-page-note">Tap one word to hear it. Words with a <b>♥</b> are story words.</p>
+      <div class="story-page-dots" aria-label="Story progress">${dots}</div>
+    </section>
+    <div class="page-controls"><button class="cta soft" data-action="story-prev">← ${page===0?"Cover":"Back"}</button><button class="cta green" data-action="story-next">${page===story.pages.length-1?"Finish story":"Next page →"}</button></div>
+  </div>`);
+}
+function nextStoryPage(){
+  const story=STORIES[current.story.index];
+  if(current.story.page<story.pages.length-1){current.story.page++;return renderStoryPage();}
+  const firstRead=!state.completedStories.includes(story.id),reward=firstRead?2:1;
+  if(firstRead)state.completedStories.push(story.id);
+  state.stats.storiesRead++;addStars(reward);save();
+  shell(`<div class="screen celebration-screen">${screenHeader("Story finished!","You followed the whole event from start to finish.","stories")}<section class="celebration-card"><div class="celebration-art">📚✨</div><h2>${esc(story.title)}</h2><p>${firstRead?"A new story has been added to your bookshelf.":"Reading it again helps the words feel easier."}</p><div class="reward-burst">+${reward} ⭐</div><button class="cta green wide" data-action="story-read-again">Read it again</button><button class="text-button" data-action="stories">Choose another story</button></section></div>`);
+}
 
 async function renderParent(){
   current.view="parent";const audio=await checkAudio();
@@ -474,6 +700,7 @@ async function renderParent(){
   shell(`<div class="screen">${screenHeader("Parent Corner","Progress stays on this device.")}
     <section class="parent-stats"><div><strong>${state.completedTrails.length}</strong><span>Trails complete</span></div><div><strong>${state.stats.wordsBlended}</strong><span>Words blended</span></div><div><strong>${state.stats.mathCorrect}</strong><span>Maths correct</span></div><div><strong>${state.garden.plants.length}</strong><span>Plants grown</span></div></section>
     <section class="settings-panel"><h2>Learner settings</h2><label class="setting-row"><span><strong>Display name</strong><small>Shown on the home screen.</small></span><input id="childName" maxlength="18" value="${esc(state.name)}"></label><div class="setting-row"><span><strong>Read questions aloud</strong><small>Used for maths, whole words and stories.</small></span><button class="toggle ${state.settings.readAloud?"on":""}" data-action="toggle-read">${state.settings.readAloud?"On":"Off"}</button></div><div class="setting-row"><span><strong>Open all phonics paths</strong><small>Useful for parent-led practice.</small></span><button class="small-button" data-action="unlock-all">Unlock</button></div></section>
+    <section class="settings-panel"><h2>Healthy screen time</h2><div class="screen-time-summary"><span>🌿</span><div><strong>20 minutes learning</strong><small>Then a five-minute minimum eye break. Ten minutes is recommended.</small></div></div><div class="setting-row"><span><strong>Current session</strong><small>${Math.ceil(sessionSecondsRemaining()/60)} minutes remaining · ${state.stats.eyeBreaks||0} breaks completed</small></span><button class="small-button" data-action="start-break-now">Start break now</button></div></section>
     <section class="settings-panel"><h2>Phonics audio</h2><div class="audio-check ${audio.ok?"good":"bad"}">${audio.ok?`✓ ${audio.count}/${EXPECTED_AUDIO.length} sound files ready`:`⚠ ${audio.count}/${EXPECTED_AUDIO.length} sound files found`}</div><button class="small-button" data-play-sound="m" data-repeat="2">Test sound</button></section>
     <section class="settings-panel"><h2>Maths progress</h2>${domains}</section>
     <section class="settings-panel"><h2>Data</h2><div class="setting-row"><span><strong>Export progress</strong><small>Download a backup file.</small></span><button class="small-button" data-action="export">Export</button></div><div class="setting-row"><span><strong>Reset everything</strong><small>This cannot be undone.</small></span><button class="small-button danger" data-action="reset">Reset</button></div></section>
@@ -484,6 +711,9 @@ async function checkAudio(){let count=0;await Promise.all(EXPECTED_AUDIO.map(asy
 function exportProgress(){const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download=`brightsteps-progress-${today()}.json`;link.click();setTimeout(()=>URL.revokeObjectURL(url),500);}
 
 function action(name){
+  if(name!=="continue-after-break"&&name!=="start-break-now"&&isBreakLocked())return renderBreak();
+  if(name==="continue-after-break")return continueAfterBreak();
+  if(name==="start-break-now")return beginEyeBreak();
   if(name==="home")return renderHome();
   if(name==="continue-learning")return startTrail(nextTrailIndex());
   if(name==="phonics")return renderTrails();
@@ -498,18 +728,29 @@ function action(name){
   if(name==="water-plant")return waterPlant();
   if(name==="place-plant")return placePlant();
   if(name==="feed-animal")return feedAnimal();
+  if(name==="story-start"){current.story.stage="pages";current.story.page=0;return renderStoryPage();}
+  if(name==="story-cover"){current.story.stage="cover";return renderStoryCover();}
+  if(name==="story-read-again"){current.story.stage="pages";current.story.page=0;return renderStoryPage();}
   if(name==="story-next")return nextStoryPage();
-  if(name==="story-prev"){if(current.story.page>0)current.story.page--;return renderStoryPage();}
+  if(name==="story-prev"){if(current.story.page>0){current.story.page--;return renderStoryPage();}current.story.stage="cover";return renderStoryCover();}
   if(name==="unlock-all"){state.unlockedTrail=TRAILS.length-1;save();toast("All phonics paths are open.");return renderParent();}
   if(name==="export")return exportProgress();
   if(name==="reset"&&confirm("Reset all BrightSteps progress, stars and garden items?")){state=defaultState();save();return renderHome();}
 }
+function pulseTap(element){if(!element)return;element.classList.remove("tap-playing");void element.offsetWidth;element.classList.add("tap-playing");setTimeout(()=>element.classList.remove("tap-playing"),650);}
+function speakStorySentence(text,button){
+  pulseTap(button);
+  const words=[...document.querySelectorAll(".story-word-button")];
+  words.forEach(word=>word.classList.add("reading"));
+  speakText(text,{rate:.72,onend:()=>words.forEach(word=>word.classList.remove("reading"))});
+}
 function bind(){
   document.querySelectorAll("[data-action]").forEach(button=>button.addEventListener("click",()=>action(button.dataset.action)));
   document.querySelectorAll("[data-trail]").forEach(button=>button.addEventListener("click",()=>startTrail(Number(button.dataset.trail))));
-  document.querySelectorAll("[data-play-sound]").forEach(button=>button.addEventListener("click",()=>playSound(button.dataset.playSound,Number(button.dataset.repeat)||1)));
-  document.querySelectorAll("[data-speak]").forEach(button=>button.addEventListener("click",()=>speakText(button.dataset.speak,{rate:.74})));
-  document.querySelectorAll("[data-blend-word]").forEach(button=>button.addEventListener("click",()=>playBlend(button.dataset.blendWord)));
+  document.querySelectorAll("[data-play-sound]").forEach(button=>button.addEventListener("click",()=>{pulseTap(button);playSound(button.dataset.playSound,Number(button.dataset.repeat)||1);}));
+  document.querySelectorAll("[data-speak]").forEach(button=>button.addEventListener("click",()=>{pulseTap(button);speakText(button.dataset.speak,{rate:.74});}));
+  document.querySelectorAll("[data-story-sentence]").forEach(button=>button.addEventListener("click",()=>speakStorySentence(button.dataset.storySentence,button)));
+  document.querySelectorAll("[data-blend-word]").forEach(button=>button.addEventListener("click",()=>{pulseTap(button);playBlend(button.dataset.blendWord);}));
   document.querySelectorAll("[data-phonics-answer]").forEach(button=>button.addEventListener("click",()=>answerPhonics(button,"sound")));
   document.querySelectorAll("[data-meaning-answer]").forEach(button=>button.addEventListener("click",()=>answerPhonics(button,"meaning")));
   document.querySelectorAll("[data-start-math]").forEach(button=>button.addEventListener("click",()=>startMaths(Number(button.dataset.startMath))));
@@ -524,5 +765,10 @@ function bind(){
 
 window.addEventListener("load",()=>{
   if("serviceWorker" in navigator)navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
-  renderHome();
+  if(Number(state.session.breakUntil||0)&&Date.now()>=Number(state.session.breakUntil||0))clearBreakState();
+  if(isBreakLocked())renderBreak();else renderHome();
+  lastSessionTick=Date.now();
+  sessionTimer=setInterval(sessionHeartbeat,1000);
 });
+document.addEventListener("visibilitychange",()=>{lastSessionTick=Date.now();if(document.visibilityState==="hidden")saveRaw();});
+window.addEventListener("beforeunload",()=>saveRaw());

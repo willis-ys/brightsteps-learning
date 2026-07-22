@@ -1,4 +1,4 @@
-const CACHE = "brightsteps-3.0.0";
+const CACHE = "brightsteps-3.2.0";
 const PHONEMES = ["a","ai","air","ar","b","c","ch","d","e","ear","ee","er","f","g","h","i","igh","j","l","m","n","ng","o","oa","oi","oo","ooo","or","ow","p","qu","r","s","sh","t","th","u","ur","ure","v","w","x","y","z"];
 const SHELL = ["./","./index.html","./styles.css","./app.js","./manifest.webmanifest","./icons/icon-192.png","./icons/icon-512.png"];
 const AUDIO = PHONEMES.map(name => `./audio/phonemes/${name}.m4a`);

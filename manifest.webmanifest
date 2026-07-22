@@ -1,7 +1,7 @@
 {
   "name": "BrightSteps Learning Adventure 2.1",
   "short_name": "BrightSteps",
-  "description": "Offline British phonics and adaptive maths for early learners.",
+  "description": "Offline phonics and adaptive maths for early learners.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

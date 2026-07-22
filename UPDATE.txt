@@ -1,0 +1,13 @@
+BrightSteps 2.1.2 — clearer status labels
+
+Replace these files in the root of your GitHub repository:
+- app.js
+- service-worker.js
+- manifest.webmanifest
+
+Changes:
+- Fire now says how many consecutive learning days it represents.
+- Stars are clearly labelled as spendable Reward Garden stars.
+- The unexplained diamond counter is replaced by a badge count.
+- Repeated British/UK voice wording has been removed from child-facing descriptions.
+- Existing progress, stars, badges, garden and trail completion are preserved.

@@ -18,3 +18,41 @@ button,input{font:inherit}.app-shell{position:relative;z-index:1;width:min(100%,
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:#f7f7ff;border-radius:20px;padding:16px;text-align:center}.stat strong{display:block;font-size:26px}.stat span{font-size:12px;color:var(--muted);font-weight:800}.badge-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.badge{background:#fff;border-radius:21px;padding:17px;text-align:center;box-shadow:0 8px 20px rgba(70,70,120,.08)}.badge.locked{filter:grayscale(1);opacity:.45}.badge .emoji{font-size:43px}.badge h4{margin:7px 0 2px}.badge p{margin:0;color:var(--muted);font-size:12px}.garden{min-height:170px;border-radius:24px;padding:20px;background:linear-gradient(#dff5ff 0 57%,#bce99e 57%);display:flex;align-items:flex-end;justify-content:space-around;font-size:48px;overflow:hidden}.garden span{filter:drop-shadow(0 7px 4px rgba(58,94,40,.13))}.domain-row{display:grid;grid-template-columns:125px 1fr 44px;gap:10px;align-items:center;margin:12px 0;font-weight:800}.domain-row small{text-align:right;color:var(--muted)}.settings-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid #ececf4}.settings-row:last-child{border:0}.text-input{width:min(100%,290px);padding:12px 14px;border-radius:14px;border:2px solid #deddf0;background:#fff;font-weight:800;color:var(--ink)}.audio-status{padding:15px;border-radius:17px;font-weight:850;background:#f4f4fb}.audio-status.good{background:#e9fbf2;color:#247f58}.audio-status.bad{background:#fff2e9;color:#9c5726}.danger{background:#fff0f3;color:#b43755}.toast{position:fixed;z-index:50;left:50%;bottom:calc(22px + var(--safe-bottom));transform:translate(-50%,30px);background:#25304b;color:#fff;padding:12px 17px;border-radius:14px;font-weight:850;opacity:0;pointer-events:none;transition:.2s;box-shadow:0 12px 30px rgba(20,25,48,.28);max-width:90vw;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}.hidden{display:none!important}.footer-note{text-align:center;color:var(--muted);font-size:12px;margin:24px 0 5px;line-height:1.5}
 @media(max-width:650px){.app-shell{padding:12px 12px calc(25px + var(--safe-bottom))}.topbar{margin-bottom:13px}.brand span:last-child{display:none}.hero{padding:21px}.hero-grid{grid-template-columns:1fr}.hero-emoji{position:absolute;right:4px;top:-3px;font-size:61px;opacity:.85}.hero h1{padding-right:64px}.cards,.trail-grid{grid-template-columns:1fr}.card{min-height:160px}.stats-grid{grid-template-columns:repeat(2,1fr)}.badge-grid{grid-template-columns:repeat(2,1fr)}.answers{grid-template-columns:1fr}.domain-row{grid-template-columns:100px 1fr 36px}.screen-head{align-items:flex-start}.pill.streak{display:none}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* BrightSteps 2.1: spoken maths and interactive reward garden */
+.math-read-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px 0 4px}
+.math-speaker,.math-auto{border:0;cursor:pointer;font-weight:950;border-radius:18px;min-height:52px;padding:12px 18px;transition:transform .12s ease,box-shadow .12s ease}
+.math-speaker{background:#5c48c6;color:#fff;box-shadow:0 7px 0 #41309e;font-size:17px}
+.math-speaker:active{transform:translateY(3px);box-shadow:0 4px 0 #41309e}
+.math-auto{background:#eceaf8;color:#6b6780;box-shadow:0 6px 0 #d9d5ef}
+.math-auto.on{background:#e9fbf2;color:#237f58;box-shadow:0 6px 0 #b6e8ce}
+.play-garden{position:relative;min-height:330px;border-radius:28px;overflow:hidden;background:linear-gradient(#cfefff 0 62%,#96db79 62% 100%);display:grid;grid-template-columns:1fr 1fr;align-items:end;padding:34px 20px 48px;isolation:isolate}
+.play-garden .sun{position:absolute;right:24px;top:20px;font-size:52px;animation:gentle-spin 10s linear infinite}
+.play-garden .cloud{position:absolute;left:28px;top:28px;font-size:50px;animation:cloud-drift 6s ease-in-out infinite}
+.garden-ground{position:absolute;z-index:-1;left:0;right:0;bottom:0;height:40%;background:linear-gradient(#82cb63,#5fae49)}
+.plant-plot,.pet-plot{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px;color:#31502e}
+.plant-emoji,.pet-emoji{font-size:clamp(72px,18vw,120px);line-height:1;filter:drop-shadow(0 9px 5px rgba(46,85,39,.2));transform-origin:bottom center}
+.pet-hearts{min-height:24px;font-size:17px;letter-spacing:2px}
+.plant-plot small,.pet-plot small{font-weight:850;color:#31502e;background:rgba(255,255,255,.6);padding:4px 8px;border-radius:999px}
+.mini-progress{width:min(150px,80%);height:10px;border-radius:99px;background:rgba(255,255,255,.7);overflow:hidden;border:2px solid rgba(48,104,43,.13)}
+.mini-progress span{display:block;height:100%;border-radius:inherit;background:#32b66c;transition:width .35s ease}
+.garden-memories{position:absolute;left:12px;right:12px;bottom:22px;z-index:1;display:flex;align-items:end;justify-content:space-around;pointer-events:none}
+.garden-memory{font-size:32px;filter:drop-shadow(0 5px 3px rgba(46,85,39,.2))}
+.garden-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.garden-button{border:0;border-radius:19px;min-height:68px;padding:13px 15px;font-size:17px;font-weight:950;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;box-shadow:0 7px 0 rgba(66,72,120,.18);transition:transform .12s ease,filter .12s ease}
+.garden-button:active:not(:disabled){transform:translateY(3px);box-shadow:0 4px 0 rgba(66,72,120,.18)}
+.garden-button span{background:rgba(255,255,255,.7);padding:5px 8px;border-radius:999px;white-space:nowrap}
+.garden-button.water{background:#bfe9ff;color:#236a91}
+.garden-button.feed{background:#ffe1a8;color:#8d5a12}
+.garden-button.plant-new{background:#d7f2c5;color:#397c2b}
+.garden-button:disabled{opacity:.48;filter:grayscale(.4);cursor:not-allowed}
+.garden-tip{text-align:center;color:var(--muted);font-weight:750;line-height:1.45;margin:13px 5px 0}
+.play-garden.water .plant-emoji{animation:plant-bounce .7s ease}
+.play-garden.feed .pet-emoji{animation:pet-hop .75s ease}
+.play-garden.plant .plant-emoji{animation:plant-pop .75s ease}
+@keyframes plant-bounce{30%{transform:scale(.86) rotate(-4deg)}70%{transform:scale(1.12) rotate(4deg)}}
+@keyframes pet-hop{35%{transform:translateY(-25px) rotate(-5deg)}70%{transform:translateY(-7px) rotate(5deg)}}
+@keyframes plant-pop{0%{transform:scale(.35)}65%{transform:scale(1.2)}100%{transform:scale(1)}}
+@keyframes cloud-drift{50%{transform:translateX(16px)}}
+@keyframes gentle-spin{to{transform:rotate(360deg)}}
+@media(max-width:650px){.play-garden{min-height:300px;padding-left:8px;padding-right:8px}.garden-actions{grid-template-columns:1fr}.garden-button{min-height:62px}.math-speaker,.math-auto{width:100%}}

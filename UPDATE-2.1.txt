@@ -1,0 +1,15 @@
+BRIGHTSTEPS 2.1 UPDATE
+
+New features
+1. Maths questions are read aloud automatically with an English (United Kingdom) system voice.
+2. Every maths question includes a large Read question button.
+3. Auto-read can be switched on or off in Maths Mountain or the Parent Dashboard.
+4. Reward Garden is now interactive.
+5. Spend 3 stars to water the plant. Two drinks grow it to the next stage.
+6. Spend 2 stars to feed the garden animal. It grows from chick to hen.
+7. A fully grown plant can be saved in the garden and replaced with a new seed for 5 stars.
+8. Lifetime stars remain recorded even when spendable stars are used.
+9. Added Green Thumb and Animal Friend badges.
+
+Upload app.js, styles.css, service-worker.js and index.html to the root of the GitHub repository.
+The existing GitHub Actions workflow and phonics audio do not need to be changed.

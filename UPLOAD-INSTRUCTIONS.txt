@@ -1,0 +1,18 @@
+BRIGHTSTEPS 2.1 — EASY UPDATE
+
+Upload these files to the ROOT of your existing brightsteps-learning GitHub repository and choose Replace when GitHub asks:
+
+- app.js
+- styles.css
+- service-worker.js
+- index.html
+- manifest.webmanifest
+
+Do not change the GitHub Actions workflow. Do not re-upload the phonics audio.
+
+After the Actions deployment is green:
+1. Open the app in Safari.
+2. Refresh twice.
+3. If the old app remains, remove the Home Screen icon, clear website data for willis-ys.github.io, reopen the site, and add it back.
+
+Existing progress is retained. The app migrates old star totals and trail progress automatically.

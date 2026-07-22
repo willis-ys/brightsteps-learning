@@ -1,4 +1,4 @@
-const CACHE="brightsteps-2.0.1";
+const CACHE="brightsteps-2.1.0";
 const AUDIO=["a","ai","air","ar","b","c","ch","d","e","ear","ee","er","f","g","h","i","igh","j","l","m","n","ng","o","oa","oi","oo","ooo","or","ow","p","qu","r","s","sh","t","th","u","ur","ure","v","w","x","y","z"].map(x=>`./audio/phonemes/${x}.m4a`);
 const SHELL=["./","./index.html","./styles.css","./app.js","./manifest.webmanifest","./icons/icon-192.png","./icons/icon-512.png"];
 self.addEventListener("install",event=>event.waitUntil((async()=>{const c=await caches.open(CACHE);await c.addAll(SHELL);await Promise.allSettled(AUDIO.map(x=>c.add(x)));self.skipWaiting()})()));

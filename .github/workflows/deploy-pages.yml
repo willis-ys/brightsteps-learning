@@ -1,4 +1,4 @@
-name: Deploy BrightSteps 2.0.1
+name: Deploy BrightSteps 2.0.2
 
 on:
   push:
@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  actions: read
   pages: write
   id-token: write
 
@@ -39,20 +38,35 @@ jobs:
           mkdir -p _site/audio/phonemes
 
           cp index.html styles.css app.js manifest.webmanifest service-worker.js \
-             .nojekyll LICENSE THIRD_PARTY_NOTICES.md _site/
+             LICENSE THIRD_PARTY_NOTICES.md _site/
 
           cp -R icons _site/icons
 
+          # Create the hidden file during deployment.
+          touch _site/.nojekyll
+
+          # Copy the licensed phonics audio into the published website.
           cp _buzzphonics/public/sounds/*.m4a _site/audio/phonemes/
 
-          AUDIO_COUNT=$(find _site/audio/phonemes -maxdepth 1 -type f -name '*.m4a' | wc -l)
+          EXPECTED=(
+            a ai air ar b c ch d e ear ee er f g h i igh j l m n ng
+            o oa oi oo ooo or ow p qu r s sh t th u ur ure v w x y z
+          )
+
+          for sound in "${EXPECTED[@]}"; do
+            test -s "_site/audio/phonemes/${sound}.m4a" || {
+              echo "Missing audio file: ${sound}.m4a"
+              exit 1
+            }
+          done
+
+          AUDIO_COUNT=$(find _site/audio/phonemes \
+            -maxdepth 1 \
+            -type f \
+            -name '*.m4a' | wc -l | tr -d ' ')
 
           echo "Installed ${AUDIO_COUNT} local phonics recordings"
-
-          test "$AUDIO_COUNT" -ge 46
-          test -s _site/audio/phonemes/m.m4a
-          test -s _site/audio/phonemes/w.m4a
-          test -s _site/audio/phonemes/th.m4a
+          test "$AUDIO_COUNT" -ge 44
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5

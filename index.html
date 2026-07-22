@@ -3,19 +3,22 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#6c55e0">
+  <meta name="theme-color" content="#7158e8">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="BrightSteps">
-  <title>BrightSteps 2.1</title>
+  <title>BrightSteps 3.0</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./icons/icon-192.png">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <div class="sky" aria-hidden="true"><span></span><span></span><span></span></div>
-  <div id="app" class="app-shell" aria-live="polite"></div>
-  <div id="toast" class="toast" role="status"></div>
+  <div class="world-bg" aria-hidden="true">
+    <span class="cloud cloud-a">☁️</span><span class="cloud cloud-b">☁️</span>
+    <span class="hill hill-a"></span><span class="hill hill-b"></span>
+  </div>
+  <main id="app" class="app-shell" aria-live="polite"></main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="./app.js" defer></script>
 </body>
 </html>

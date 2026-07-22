@@ -1,0 +1,20 @@
+BrightSteps 3.0 — complete rewrite
+
+Replace the following files in the root of your existing GitHub repository:
+- index.html
+- styles.css
+- app.js
+- service-worker.js
+- manifest.webmanifest
+- README.md
+
+Keep the existing GitHub Actions workflow. It will continue copying the licensed phonics files into audio/phonemes during deployment.
+
+Important fixes and changes:
+- Whole-word pronunciation is available for every phonics example and blended word.
+- Blending plays phonemes first, then reads the complete word.
+- Maths questions are read aloud and validated before display.
+- My Garden keeps each fully grown plant as a separate permanent item.
+- Existing old garden progress is migrated; a completed active plant is counted as an additional permanent plant.
+- Stars are the only spendable currency. No daily gift and no gems.
+- Story House, animal unlocks and two maths session lengths are included.

@@ -1,0 +1,8 @@
+BrightSteps 3.4.1 garden fix
+
+- Corrected animal travel/facing synchronization.
+- Animal name labels remain readable instead of being mirrored.
+- Added four separate roaming lanes.
+- Fixed watering, feeding, and animal-arrival visual feedback selectors.
+- Added reduced-motion handling.
+- Unified app, manifest, and service-worker versions at 3.4.1.

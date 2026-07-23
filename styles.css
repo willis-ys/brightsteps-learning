@@ -84,14 +84,26 @@ body{overscroll-behavior-y:none}button,input{font:inherit}.hidden{display:none!i
 @media(max-width:760px){.sound-explorer-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.explorer-sound{min-height:105px}.explorer-sound strong{font-size:47px}}
 @media(max-width:520px){.phonics-tabs button{min-height:65px;padding:8px}.phonics-tabs button>span{font-size:26px}.phonics-tabs button strong{font-size:14px}.phonics-tabs button small{font-size:10px}.explorer-banner{align-items:flex-start;padding:15px}.explorer-banner>span{font-size:47px}.sound-explorer-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.explorer-card{padding:7px;border-radius:19px}.explorer-sound{min-height:100px}.explorer-sound strong{font-size:45px}.extra-grid .explorer-sound strong{font-size:34px}.explorer-example>small{font-size:11px}}
 
-/* BrightSteps 3.4 — living garden animals */
+/* BrightSteps 3.4.1 — living garden animals, direction and feedback fixes */
 .garden-roaming-animals{position:absolute;inset:92px 18px 68px;z-index:3;pointer-events:none;overflow:hidden}
-.roaming-animal{position:absolute;left:0;bottom:0;border:0;background:transparent;padding:0;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 5px 3px rgba(42,83,37,.22));animation:gardenWander var(--wander-time,13s) ease-in-out var(--wander-delay,0s) infinite alternate}
-.roaming-animal span{display:block;font-size:56px;line-height:1;transform-origin:50% 100%;animation:animalBob .75s ease-in-out infinite alternate}
-.roaming-animal small{display:block;margin-top:2px;padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.78);font-size:10px;font-weight:950;color:#34552e;opacity:0;transition:.2s}
-.roaming-animal:active small,.roaming-animal:focus-visible small{opacity:1}
-.roaming-lane-0{bottom:5%}.roaming-lane-1{bottom:30%;animation-direction:alternate-reverse}.roaming-lane-2{bottom:54%}
-@keyframes gardenWander{0%{left:1%;transform:translateX(0) scaleX(1)}45%{left:48%;transform:translateX(-20%) scaleX(1)}55%{left:52%;transform:translateX(-20%) scaleX(-1)}100%{left:91%;transform:translateX(-100%) scaleX(-1)}}
+.roaming-animal{position:absolute;left:1%;bottom:0;border:0;background:transparent;padding:8px;pointer-events:auto;cursor:pointer;filter:drop-shadow(0 5px 3px rgba(42,83,37,.22));animation:gardenWander var(--wander-time,26s) ease-in-out var(--wander-delay,0s) infinite;will-change:left}
+.roaming-animal .animal-face{display:block;transform-origin:50% 50%;animation:gardenFace var(--wander-time,26s) steps(1,end) var(--wander-delay,0s) infinite}
+.roaming-animal .animal-sprite{display:block;font-size:56px;line-height:1;transform-origin:50% 100%;animation:animalBob .75s ease-in-out infinite alternate}
+.roaming-animal small{display:block;margin-top:2px;padding:3px 7px;border-radius:999px;background:rgba(255,255,255,.82);font-size:10px;font-weight:950;color:#34552e;opacity:0;transform:translateY(3px);transition:.2s;white-space:nowrap}
+.roaming-animal.selected small,.roaming-animal:active small,.roaming-animal:focus-visible small{opacity:1;transform:none}
+.roaming-animal.selected{background:rgba(255,255,255,.18);border-radius:50%}
+.roaming-animal:focus-visible{outline:3px solid #7158e8;outline-offset:2px}
+.roaming-lane-0{bottom:3%;z-index:7}.roaming-lane-1{bottom:20%;z-index:6}.roaming-lane-2{bottom:37%;z-index:5}.roaming-lane-3{bottom:54%;z-index:4}
+@keyframes gardenWander{0%{left:1%}47%{left:91%}50%{left:91%}97%{left:1%}100%{left:1%}}
+/* Apple/Windows animal emoji generally face left natively: flip only while travelling right. */
+@keyframes gardenFace{0%,49.99%{transform:scaleX(-1)}50%,99.99%{transform:scaleX(1)}100%{transform:scaleX(-1)}}
 @keyframes animalBob{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-6px) rotate(2deg)}}
-@media (prefers-reduced-motion:reduce){.roaming-animal,.roaming-animal span{animation:none!important}.garden-roaming-animals{display:flex;align-items:flex-end;gap:10px}.roaming-animal{position:relative;margin:8px}}
-@media (max-width:640px){.garden-roaming-animals{inset:88px 10px 62px}.roaming-animal span{font-size:48px}}
+@keyframes animalGlow{40%{filter:drop-shadow(0 8px 7px rgba(255,208,64,.95)) brightness(1.12)}}
+.garden-screen.watering .nursery-plant{animation:plantBounce .75s ease}
+.garden-screen.placing .grown-item:last-child{animation:plantPop .7s ease}
+.garden-screen.feeding .garden-animal.selected{animation:animalHop .75s ease}
+.garden-screen.feeding .roaming-animal.selected{animation:gardenWander var(--wander-time,26s) ease-in-out var(--wander-delay,0s) infinite,animalGlow .85s ease 0s 1}
+.garden-screen.animal-arrive .garden-animal.selected{animation:plantPop .75s ease}
+.garden-screen.animal-arrive .roaming-animal.selected{animation:gardenWander var(--wander-time,26s) ease-in-out var(--wander-delay,0s) infinite,animalGlow .9s ease 0s 2}
+@media (prefers-reduced-motion:reduce){.garden-roaming-animals{display:flex;align-items:flex-end;justify-content:space-around;gap:4px}.roaming-animal,.roaming-animal .animal-face,.roaming-animal .animal-sprite{animation:none!important}.roaming-animal{position:relative;left:auto;bottom:auto!important;margin:4px;will-change:auto}.roaming-animal .animal-face{transform:none}}
+@media (max-width:640px){.garden-roaming-animals{inset:88px 10px 62px}.roaming-animal .animal-sprite{font-size:48px}.roaming-animal{padding:6px}}

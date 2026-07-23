@@ -1,0 +1,10 @@
+BrightSteps 3.3 update
+
+NEW: Always-open Sound Explorer in Phonics Forest.
+- A-Z available immediately
+- tap a letter = phonics sound
+- tap the picture = example word
+- common digraphs and extra spellings available immediately
+- no quiz, no lock, no stars, no progress changes
+
+All BrightSteps 3.2 story and screen-break improvements remain in place.

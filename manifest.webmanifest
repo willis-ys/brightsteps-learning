@@ -1,7 +1,7 @@
 {
-  "name": "BrightSteps Learning Adventure 3.2",
+  "name": "BrightSteps Learning Adventure 3.3",
   "short_name": "BrightSteps",
-  "description": "A playful phonics, maths, meaningful story and garden learning app for early learners.",
+  "description": "A playful phonics, always-open sound explorer, maths, story and garden learning app for early learners.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

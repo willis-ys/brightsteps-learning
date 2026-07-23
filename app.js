@@ -1,6 +1,6 @@
 "use strict";
 
-const APP_VERSION = "3.2.0";
+const APP_VERSION = "3.3.0";
 const LEARNING_SESSION_SECONDS = 20 * 60;
 const MIN_BREAK_SECONDS = 5 * 60;
 const RECOMMENDED_BREAK_SECONDS = 10 * 60;
@@ -34,6 +34,15 @@ const SOUND_META = {
   oo:{emoji:"📖",word:"book"},"oo-long":{emoji:"🌙",word:"moon"},ar:{emoji:"⭐",word:"star"},or:{emoji:"🍴",word:"fork"},ur:{emoji:"🐦",word:"bird"},
   ow:{emoji:"🦉",word:"owl"},oi:{emoji:"🪙",word:"coin"},ear:{emoji:"👂",word:"ear"},air:{emoji:"🪑",word:"chair"},ure:{emoji:"🧴",word:"cure"},er:{emoji:"🔨",word:"hammer"}
 };
+
+const ALPHABET_EXPLORER = [
+  {letter:"a",sound:"a"},{letter:"b",sound:"b"},{letter:"c",sound:"c"},{letter:"d",sound:"d"},{letter:"e",sound:"e"},{letter:"f",sound:"f"},
+  {letter:"g",sound:"g"},{letter:"h",sound:"h"},{letter:"i",sound:"i"},{letter:"j",sound:"j"},{letter:"k",sound:"k"},{letter:"l",sound:"l"},
+  {letter:"m",sound:"m"},{letter:"n",sound:"n"},{letter:"o",sound:"o"},{letter:"p",sound:"p"},{letter:"q",sound:"qu"},{letter:"r",sound:"r"},
+  {letter:"s",sound:"s"},{letter:"t",sound:"t"},{letter:"u",sound:"u"},{letter:"v",sound:"v"},{letter:"w",sound:"w"},{letter:"x",sound:"x"},
+  {letter:"y",sound:"y"},{letter:"z",sound:"z"}
+];
+const EXTRA_SOUND_EXPLORER = ["ck","ff","ll","ss","zz","qu","ch","sh","th","ng","ai","ee","igh","oa","oo","oo-long","ar","or","ur","ow","oi","ear","air","ure","er"];
 
 const WORDS = [
   {word:"sat",tokens:["s","a","t"],emoji:"🪑"},{word:"pat",tokens:["p","a","t"],emoji:"🖐️"},{word:"tap",tokens:["t","a","p"],emoji:"🚰"},
@@ -374,7 +383,7 @@ function renderHome(){
     </section>
     <div class="section-title"><div><h2>Choose a place</h2><p>Every activity is made for tapping, listening and playing.</p></div></div>
     <section class="adventure-grid">
-      <button class="adventure-card forest" data-action="phonics"><span class="scene">🌲🦉🌲</span><span class="tag">Reading</span><h3>Phonics Forest</h3><p>Hear sounds, learn whole words and blend them together.</p>${progressBar(phonicsProgress(),`${state.completedTrails.length}/${TRAILS.length} trails`)}</button>
+      <button class="adventure-card forest" data-action="phonics"><span class="scene">🌲🦉🌲</span><span class="tag">Reading</span><h3>Phonics Forest</h3><p>Follow learning paths or tap any sound from a to z whenever you need a reminder.</p>${progressBar(phonicsProgress(),`${state.completedTrails.length}/${TRAILS.length} trails`)}</button>
       <button class="adventure-card mountain" data-action="maths-menu"><span class="scene">☁️⛰️☁️</span><span class="tag">Numbers</span><h3>Maths Mountain</h3><p>Listen to questions and solve them with pictures and hints.</p>${progressBar(mathsAccuracy(),state.stats.mathAttempts?`${mathsAccuracy()}% correct`:"Ready to climb")}</button>
       <button class="adventure-card garden" data-action="garden"><span class="scene">🌼🐰🌳</span><span class="tag">Create</span><h3>My Garden</h3><p>Grow permanent plants, unlock animals and care for your world.</p><div class="card-stat"><b>${state.garden.plants.length}</b> plants · <b>${state.garden.animals.length}</b> animals</div></button>
       <button class="adventure-card stories" data-action="stories"><span class="scene">📚🏡✨</span><span class="tag">Read together</span><h3>Story House</h3><p>Open short stories and hear every sentence read aloud.</p><div class="card-stat"><b>${STORIES.filter(s=>state.completedTrails.some(t=>t>=s.unlock)).length}</b> stories open</div></button>
@@ -384,6 +393,12 @@ function renderHome(){
   </div>`);
 }
 
+function phonicsTabs(active="paths"){
+  return `<div class="phonics-tabs" role="tablist" aria-label="Phonics activities">
+    <button role="tab" aria-selected="${active==="paths"}" class="${active==="paths"?"active":""}" data-action="phonics"><span>🌳</span><strong>Learn Paths</strong><small>guided lessons</small></button>
+    <button role="tab" aria-selected="${active==="sounds"}" class="${active==="sounds"?"active":""}" data-action="sound-explorer"><span>🔤</span><strong>Sound Explorer</strong><small>all sounds open</small></button>
+  </div>`;
+}
 function renderTrails(){
   current.view="trails";reconcileTrailProgress();
   const trailCards=TRAILS.map((trail,index)=>{
@@ -396,9 +411,44 @@ function renderTrails(){
       <p>${complete?"Trail completed · replay any time":`${practised}/${trail.sounds.length} sounds practised`}</p>${unlocked?"":"<span class='lock-badge'>🔒</span>"}
     </button>`;
   }).join("");
-  shell(`<div class="screen">${screenHeader("Phonics Forest","Choose a path and learn through listening, words and blending.")}
-    <div class="forest-banner"><span>🦊</span><div><strong>${state.completedTrails.length} paths completed</strong><p>The next path opens as soon as the current one is finished.</p></div></div>
+  shell(`<div class="screen">${screenHeader("Phonics Forest","Learn in order, or open Sound Explorer whenever a sound is forgotten.")}
+    ${phonicsTabs("paths")}
+    <div class="forest-banner"><span>🦊</span><div><strong>${state.completedTrails.length} paths completed</strong><p>Learning paths still guide progress. Sound Explorer is always fully open.</p></div></div>
     <section class="trail-grid">${trailCards}</section>${bottomNav("phonics")}</div>`);
+}
+function explorerCard({label,sound,meta,upper="",note=""}){
+  const word=meta?.word||"";
+  const emoji=meta?.emoji||"🔤";
+  return `<div class="explorer-card">
+    <button class="explorer-sound tap-audio" data-play-sound="${esc(sound)}" aria-label="Hear the ${esc(label)} phonics sound">
+      ${upper?`<span class="explorer-upper">${esc(upper)}</span>`:""}<strong>${esc(label)}</strong><small>tap for sound</small>${note?`<em>${esc(note)}</em>`:""}
+    </button>
+    <button class="explorer-example tap-audio" data-speak="${esc(word)}" aria-label="Hear the word ${esc(word)}"><span>${emoji}</span><small>${esc(word)}</small></button>
+  </div>`;
+}
+function renderSoundExplorer(){
+  current.view="sound-explorer";
+  const alphabet=ALPHABET_EXPLORER.map(item=>{
+    const meta=SOUND_META[item.sound];
+    const note=item.letter==="q"?"usually qu":"";
+    return explorerCard({label:item.letter,sound:item.sound,meta,upper:item.letter.toUpperCase(),note});
+  }).join("");
+  const extras=EXTRA_SOUND_EXPLORER.map(sound=>{
+    const meta=SOUND_META[sound];
+    const label=sound==="oo-long"?"oo":sound;
+    const note=sound==="oo"?"book sound":sound==="oo-long"?"moon sound":"";
+    return explorerCard({label,sound,meta,note});
+  }).join("");
+  shell(`<div class="screen sound-explorer-screen">${screenHeader("Phonics Forest","Tap any letter or phonics pattern and hear its sound straight away.")}
+    ${phonicsTabs("sounds")}
+    <section class="explorer-banner"><span>🦉</span><div><strong>No tests. Nothing is locked.</strong><p>Tap a big letter for its phonics sound. Tap the picture underneath to hear the example word.</p></div></section>
+    <div class="section-title compact"><div><h2>A to Z</h2><p>Every letter is available from the start.</p></div></div>
+    <section class="sound-explorer-grid alphabet-grid">${alphabet}</section>
+    <div class="section-title explorer-more-title"><div><h2>More phonics sounds</h2><p>Digraphs and other spellings are always available too.</p></div></div>
+    <section class="sound-explorer-grid extra-grid">${extras}</section>
+    <div class="explorer-tip"><span>💡</span><p>This area is for listening and learning only. Playing a sound does not change scores, stars or lesson progress.</p></div>
+    ${bottomNav("phonics")}
+  </div>`);
 }
 
 function startTrail(index){
@@ -717,6 +767,7 @@ function action(name){
   if(name==="home")return renderHome();
   if(name==="continue-learning")return startTrail(nextTrailIndex());
   if(name==="phonics")return renderTrails();
+  if(name==="sound-explorer")return renderSoundExplorer();
   if(name==="maths-menu")return renderMathMenu();
   if(name==="garden")return renderGarden();
   if(name==="stories")return renderStories();

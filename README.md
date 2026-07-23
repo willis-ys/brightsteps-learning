@@ -1,22 +1,19 @@
-# BrightSteps 3.2
+# BrightSteps 3.3
 
-BrightSteps 3.2 is an iPad-friendly, offline-capable early-learning app for GitHub Pages.
+BrightSteps 3.3 is an iPad-friendly, offline-capable early-learning app for GitHub Pages.
 
-## Changes in 3.2
+## Changes in 3.3
 
-- Story House has been rewritten around short, connected events that a five-year-old can follow.
-- Each story now has:
-  - a spoken Owl introduction that explains the situation;
-  - one character or situation carried through every page;
-  - page-specific picture scenes;
-  - tappable individual words;
-  - a tappable picture that reads the complete sentence;
-  - clearly marked heart words introduced before reading.
-- The first read earns two stars; rereading earns one star and supports fluency.
-- Completed stories are marked on the Story House shelf.
-- Phonics interactions remain content-led: tap letters for sounds and words or pictures for whole-word pronunciation.
-- The healthy screen-time cycle remains enabled: 20 minutes of active use, then a five-minute minimum eye break, with ten minutes recommended.
-- Existing BrightSteps progress, stars, garden items, phonics progress and screen-time state are retained.
+- Added **Sound Explorer** as a second tab inside Phonics Forest.
+- Sound Explorer is deliberately **not locked** and is **not a test**. Every sound can be played from the beginning.
+- The A-to-Z grid lets a child tap any letter and immediately hear its phonics pronunciation.
+- Tapping the picture under a letter reads the example word aloud.
+- `q` uses the early-phonics `qu` sound and is labelled accordingly.
+- Added an always-open **More phonics sounds** section for `sh`, `ch`, `th`, `ng`, vowel digraphs and other taught spellings.
+- Listening in Sound Explorer does not award stars, affect scores or change lesson progress.
+- Guided Learn Paths remain available as before for structured progression.
+- The 3.2 Story House rewrite and the 20-minute learning / five-minute minimum eye-break system are retained.
+- Existing progress, stars, garden items, phonics progress and screen-time state are retained.
 
 ## Update an existing GitHub repository
 
